@@ -1,0 +1,25 @@
+#components-layout-demo-side .logo {
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px;
+    /* background-image: url(https://scontent.fhan2-4.fna.fbcdn.net/v/t1.0-9/66328633_2154048571387370_3327652506737049600_n.jpg?_nc_cat=104&_nc_oc=AQmwoO9vAM0YzgUWL8x-f8KFoOJcn6wA2wLmXD6GxtY224MQ4sBhqpQvlem7fP_liLk&_nc_ht=scontent.fhan2-4.fna&oh=b03aea15af5a3edac3e162972c6f697a&oe=5DF2540A); */
+
+
+  }
+label {
+    text-align:center;
+    line-height:150%;
+    font-size:.85em;
+}
+  .haha{
+    /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; */
+    /* font-weight: 600; */
+    color: #212529;
+    box-sizing: border-box;
+    /* font-size: 30px; */
+}
+.avatar {
+    
+   margin: 18 px;
+
+}
