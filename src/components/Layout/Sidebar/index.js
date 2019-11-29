@@ -65,6 +65,18 @@ class SiderMenu extends React.Component {
               <span>Kỳ thi</span>
             </Link>
           </Menu.Item>
+          <Menu.Item key="student-info">
+            <Link to={ROUTER.STUDENT_INFO.INDEX}>
+              <Icon type="user" />
+              <span>Thông tin cá nhân</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="exam-registration">
+            <Link to={ROUTER.EXAM_REGISTRATION.INDEX}>
+              <Icon type="history" />
+              <span>Đăng ký thi</span>
+            </Link>
+          </Menu.Item>
         </Menu>
       </Sider>
     );

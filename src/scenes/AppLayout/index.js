@@ -17,6 +17,8 @@ import select from '../../utils/select';
 import UserWidget from './components/UserWidget';
 import ChangePasswordPage from '../Auth/ChangePasswordPage';
 import { pushNotification, popNotification } from './action';
+import StudentInfo from '../SV_Info';
+import ExamRegistration from '../SV_Exam';
 
 const { Content, Header } = Layout;
 
@@ -58,6 +60,8 @@ class AppLayout extends Component {
               <Exam />
               <Student />
               <Subject />
+              <StudentInfo />
+              <ExamRegistration />
               <Switch>
                 <Route path={ROUTER.HOME} exact render={() => <div>abc</div>} />
                 <Route exact path={ROUTER.AUTH.CHANGE_PASSWORD} component={ChangePasswordPage} />

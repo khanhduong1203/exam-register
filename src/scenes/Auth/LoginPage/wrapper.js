@@ -27,17 +27,16 @@ class LoginWrapper extends Component {
   render() {
     const {
       locale,
-      locale: { trans },
       doLogin,
     } = this.props;
     const { error } = this.state;
     return (
       <Card hoverable={false} clickable={false} hasShadow>
-        <h1 style={{ textAlign: 'center' }}>{trans('Log In')}</h1>
+        <h1 style={{ textAlign: 'center' }}>Đăng nhập</h1>
         <Form error={error} onSubmit={values => doLogin(values)} locale={locale} removeError={() => this.removeError()} />
         <div>
           <Link to="/" style={{ float: 'right' }}>
-            {`${trans('Forgot password')}?`}
+            Quên mật khẩu?
           </Link>
         </div>
       </Card>

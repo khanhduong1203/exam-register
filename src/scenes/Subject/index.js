@@ -1,16 +1,16 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import ROUTER from '../../constant/router';
-import RoomsPage from './list';
-import EditRoomPage from './edit';
-import AddRoomPage from './add';
+import SubjectsPage from './list';
+import EditSubjectPage from './edit';
+import AddSubjectPage from './add';
 
-const Room = () => (
+const Subject = () => (
   <Switch>
-    <Route path={ROUTER.SUBJECT.INDEX} component={RoomsPage} exact />
-    <Route path={ROUTER.SUBJECT.ADD} component={AddRoomPage} exact />
-    <Route path={ROUTER.SUBJECT.EDIT} component={EditRoomPage} exact />
+    <Route path={ROUTER.SUBJECT.INDEX} component={SubjectsPage} exact />
+    <Route path={ROUTER.SUBJECT.ADD} component={AddSubjectPage} exact />
+    <Route path={ROUTER.SUBJECT.EDIT} component={EditSubjectPage} exact />
   </Switch>
 );
 
-export default Room;
+export default Subject;

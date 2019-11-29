@@ -20,6 +20,12 @@ const ROUTER = {
     ADD: '/student/add',
     EDIT: '/student/:id',
   },
+  STUDENT_INFO: {
+    INDEX: '/student-info',
+  },
+  EXAM_REGISTRATION: {
+    INDEX: '/exam-registration',
+  },
   NOT_FOUND: '/404',
   UNAUTHORIZED: '/401',
 };

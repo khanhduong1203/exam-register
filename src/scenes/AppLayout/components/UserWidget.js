@@ -18,11 +18,10 @@ class UserWidget extends Component {
     };
 
     logOut = () => {
-      const { trans } = this.props.locale;
       Modal.confirm({
-        title: trans('Are you sure to logout?'),
-        okText: trans('Yes'),
-        cancelText: trans('No'),
+        title: 'Bạn muốn đăng xuất?',
+        okText: 'Đồng ý',
+        cancelText: 'Không',
         onOk: () => {
           this.props.logOut();
         },

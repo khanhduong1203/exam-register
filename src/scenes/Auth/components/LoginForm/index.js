@@ -18,30 +18,29 @@ const LoginForm = ({
   onSubmit, form, locale, error, removeError,
 }) => {
   const { getFieldDecorator } = form;
-  const { trans } = locale;
   return (
     <Form onSubmit={event => handleSubmit(event, form, onSubmit)}>
       <Form.Item
-        label={trans('Username')}
+        label="Tên đăng nhập"
         validateStatus={error ? 'error' : undefined}
-        help={error ? trans('These credential do not match our records!') : undefined}
+        help={error ? 'Những thông tin không phù hợp với hồ sơ của chúng tôi!' : undefined}
       >
         {getFieldDecorator('userName', {
-          rules: [{ required: true, message: `${trans('Please input your Username')}!` }],
-        })(<Input placeholder={`${trans('Enter your username')} ...`} onChange={() => removeError()} />)}
+          rules: [{ required: true, message: 'Hãy nhập tên đăng nhập của bạn !' }],
+        })(<Input placeholder="Nhập tên đăng nhập của bạn ..." onChange={() => removeError()} />)}
       </Form.Item>
-      <Form.Item label={trans('Password')} validateStatus={error ? 'error' : undefined}>
+      <Form.Item label="Mật khẩu" validateStatus={error ? 'error' : undefined}>
         {getFieldDecorator('password', {
-          rules: [{ required: true, message: `${trans('Please input your Password')}!` }],
-        })(<Input type="password" placeholder={`${trans('Enter your password')} ...`} />)}
+          rules: [{ required: true, message: 'Hãy nhập mật khẩu của bạn' }],
+        })(<Input type="password" placeholder="Nhập vào mật khẩu" />)}
       </Form.Item>
       <Form.Item>
         {getFieldDecorator('remember', {
           valuePropName: 'checked',
           initialValue: true,
-        })(<Checkbox>{trans('Remember me')}</Checkbox>)}
+        })(<Checkbox>Ghi nhớ tôi</Checkbox>)}
         <Button type="primary" htmlType="submit" style={{ width: '100%' }} icon="login">
-          {trans('Log In')}
+          Đăng nhập
         </Button>
       </Form.Item>
     </Form>

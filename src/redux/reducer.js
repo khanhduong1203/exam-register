@@ -4,6 +4,7 @@ import authReducer from '../scenes/Auth/reducer';
 import studentReducer from '../scenes/Student/reducer';
 import subjectReducer from '../scenes/Subject/reducer';
 import examReducer from '../scenes/Exam/reducer';
+import examRegistrationReducer from '../scenes/SV_Exam/reducer';
 
 export default combineReducers({
   authReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
   studentReducer,
   subjectReducer,
   examReducer,
+  examRegistrationReducer,
 });
