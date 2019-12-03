@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Tabs } from 'antd';
 import WithAuthentication from '../../hoc/WithAuthentication';
 import List from './components/List';
 import select from '../../utils/select';
@@ -7,6 +8,8 @@ import {
   getStudentsIfNeed,
 } from './actions';
 import toJS from '../../hoc/ToJS/index';
+
+const { TabPane } = Tabs;
 
 class EmployeesPage extends React.Component {
   state = {}

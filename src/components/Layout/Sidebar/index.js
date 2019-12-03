@@ -73,7 +73,7 @@ class SiderMenu extends React.Component {
           </Menu.Item>
           <Menu.Item key="exam-registration">
             <Link to={ROUTER.EXAM_REGISTRATION.INDEX}>
-              <Icon type="history" />
+              <Icon type="solution" />
               <span>Đăng ký thi</span>
             </Link>
           </Menu.Item>

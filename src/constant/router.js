@@ -6,6 +6,8 @@ const ROUTER = {
   },
   EXAM: {
     INDEX: '/exam',
+    ADD: '/exam/add',
+    EDIT: '/exam/:id',
   },
   SUBJECT: {
     INDEX: '/subject',

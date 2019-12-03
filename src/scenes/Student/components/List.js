@@ -10,12 +10,14 @@ import {
 import { Link } from 'react-router-dom';
 import ROUTER from '../../../constant/router';
 import { getStudentsIfNeed } from '../actions';
+import ImportModal from './ImportModal';
 
 class StudentList extends React.Component {
   state = {
     filteredInfo: null,
     sortedInfo: null,
     searchText: '',
+    visible: false,
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -146,6 +148,7 @@ class StudentList extends React.Component {
     return (
       <div>
         <Button type="primary" onClick={() => history.push(ROUTER.STUDENT.ADD)}>+ Thêm mới </Button>
+        <Button style={{ marginLeft: '10px' }} onClick={() => this.setState({ visible: true })}>Thêm từ Excel</Button>
         <Button onClick={this.clearAll} style={{ float: 'right' }}>Bỏ lọc</Button>
         <Divider />
         <Table
@@ -157,6 +160,10 @@ class StudentList extends React.Component {
             showSizeChanger: true,
           }}
           rowKey={r => r.id}
+        />
+        <ImportModal
+          visible={this.state.visible}
+          closeModal={() => this.setState({ visible: false })}
         />
       </div>
     );

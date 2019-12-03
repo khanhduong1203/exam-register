@@ -107,3 +107,18 @@ export const SHIFTS = [
     id: 5, name: 'Ca 5', day: moment(), start: '07:00', end: '09:00',
   },
 ];
+
+export const EXAMS = [
+  {
+    id: 1,
+    name: 'Cuối kì 1 - năm học 2019-2020',
+  },
+  {
+    id: 2,
+    name: 'Cuối kì 2 - năm học 2018-2019',
+  },
+  {
+    id: 3,
+    name: 'Cuối kì 1 - năm học 2018-2019',
+  },
+];

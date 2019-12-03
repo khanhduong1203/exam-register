@@ -1,9 +1,10 @@
 import { fromJS } from 'immutable';
 import { TYPE } from '../../config/actions';
+import { EXAMS } from '../../constant/enum';
 // import { combineReducers } from 'redux-immutable';
 
 const departmentState = fromJS({
-  list: [],
+  list: EXAMS,
   detail: {},
   isFetching: false,
   didInvalidate: true,

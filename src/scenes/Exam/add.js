@@ -1,11 +1,14 @@
 import React from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, Tabs } from 'antd';
 import { connect } from 'react-redux';
 import FormExam from './components/Form';
 import ToJS from '../../hoc/ToJS';
 import withAuthentication from '../../hoc/WithAuthentication';
 import select from '../../utils/select';
+import { getStudentsIfNeed } from '../Student/actions';
+import { getSubjectsIfNeed } from '../Subject/actions';
 
+const { TabPane } = Tabs;
 class DepartmentPage extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +20,12 @@ class DepartmentPage extends React.Component {
         listShift: [],
       },
     };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    props.getSubjectsIfNeed();
+    props.getStudentsIfNeed();
+    return state;
   }
 
   createExam = (payload) => {
@@ -59,6 +68,7 @@ class DepartmentPage extends React.Component {
               onSubmit={this.createExam}
               selectRoom={this.selectRoom}
               exam={exam}
+              listSubject={this.props.listSubject}
             />
           </Col>
         </Row>
@@ -69,12 +79,15 @@ class DepartmentPage extends React.Component {
 
 const mapStateToProps = state => ({
   list: select(state, 'examReducer', 'list'),
+  listSubject: select(state, 'subjectReducer', 'list'),
   isFetching: select(state, 'studentReducer', 'isFetching'),
   didInvalidate: select(state, 'studentReducer', 'didInvalidate'),
 });
 
 const mapDispatchToProps = dispatch => ({
   // createExam: params => dispatch(createExam(params)),
+  getSubjectsIfNeed: params => dispatch(getSubjectsIfNeed(params)),
+  getStudentsIfNeed: params => dispatch(getStudentsIfNeed(params)),
 });
 
 export default withAuthentication(false)(

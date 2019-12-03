@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Button, Col, Row, Table, Icon, Select,
+  Button, Col, Row, Table, Icon, Select, notification,
 } from 'antd';
 import WithAuthentication from '../../hoc/WithAuthentication';
 import select from '../../utils/select';
@@ -24,6 +24,12 @@ const columns = shifts => [
     width: 200,
   },
   {
+    title: <b>Ngày thi</b>,
+    dataIndex: 'day',
+    width: 150,
+    render: value => value.format('DD-MM-YYYY'),
+  },
+  {
     title: <b>Ca thi</b>,
     dataIndex: 'shift',
     align: 'center',
@@ -38,12 +44,6 @@ const columns = shifts => [
         ))}
       </Select>
     ),
-  },
-  {
-    title: <b>Ngày thi</b>,
-    dataIndex: 'day',
-    width: 150,
-    render: value => value.format('DD-MM-YYYY'),
   },
   {
     title: <b>Bắt đầu</b>,
@@ -68,12 +68,16 @@ const columns = shifts => [
   },
 ];
 
-class StudentInfoPage extends Component {
+class StudentExamPage extends Component {
   state = {}
 
   static getDerivedStateFromProps(props, state) {
     // props.getSubjectsIfNeed();
     return state;
+  }
+
+  onRegist = () => {
+    notification.success({ message: 'Đăng ký thành công !' });
   }
 
   render() {
@@ -93,6 +97,7 @@ class StudentInfoPage extends Component {
                     <Button
                       type="primary"
                       style={{ float: 'right', marginRight: '10px', display: 'inline-block' }}
+                      onClick={() => this.onRegist()}
                     >
                       {'Đăng ký'}
                     </Button>
@@ -126,5 +131,5 @@ export default WithAuthentication(false)(
   ((connect(
     mapStateToProps,
     mapDispatchToProps,
-  )(toJS(StudentInfoPage)))),
+  )(toJS(StudentExamPage)))),
 );

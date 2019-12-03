@@ -6,7 +6,6 @@ import {
 } from 'antd';
 
 import ToJS from '../../../hoc/ToJS/index';
-import { STUDENT_STATUS, PCT } from '../../../constant/enum';
 
 const { Item } = Form;
 const { Option } = Select;

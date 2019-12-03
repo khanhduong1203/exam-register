@@ -57,11 +57,11 @@ class AppLayout extends Component {
           </Header>
           <Content style={{ margin: '16px' }}>
             <div style={{ padding: 24, background: '#fff', minHeight: 550 }}>
-              <Exam />
-              <Student />
-              <Subject />
-              <StudentInfo />
-              <ExamRegistration />
+              <Exam history={history} />
+              <Student history={history} />
+              <Subject history={history} />
+              <StudentInfo history={history} />
+              <ExamRegistration history={history} />
               <Switch>
                 <Route path={ROUTER.HOME} exact render={() => <div>abc</div>} />
                 <Route exact path={ROUTER.AUTH.CHANGE_PASSWORD} component={ChangePasswordPage} />

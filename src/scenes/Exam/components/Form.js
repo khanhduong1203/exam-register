@@ -1,14 +1,16 @@
 import React from 'react';
 import {
-  Row, Col, Form, Input, DatePicker, Button, TimePicker, InputNumber, Table, Divider, Select,
+  Row, Col, Form, Input, DatePicker, Button, TimePicker, InputNumber, Table, Divider, Select, Tabs, List,
 } from 'antd';
 import moment from 'moment';
 import ToJS from '../../../hoc/ToJS';
 import { ROOM, SUBJECT } from '../../../constant/enum';
+import ImportModal from './ImportModal';
 
 const { Item } = Form;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { TabPane } = Tabs;
 
 function getNumberComputer(arr) {
   let num = 0;
@@ -87,7 +89,36 @@ const columns = selectRoom => [
   },
 ];
 
+const columnsSubject = openModal => [
+  {
+    title: <b>Tên môn thi</b>,
+    dataIndex: 'name',
+  },
+  {
+    title: <b>Mã môn thi</b>,
+    dataIndex: 'code',
+  },
+  {
+    title: <b>Danh sách sinh viên</b>,
+    render: (value, record) => <Button onClick={() => openModal(record)}>Chọn file</Button>,
+  },
+];
 class FormExam extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      subject: {},
+      visible: false,
+    };
+  }
+
+  onOpenModal = (subject) => {
+    this.setState({
+      visible: true,
+      subject,
+    });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -110,7 +141,9 @@ class FormExam extends React.Component {
       editMode,
       exam,
       selectRoom,
+      listSubject,
     } = this.props;
+    const { subject } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.handleSubmit}>
@@ -121,7 +154,7 @@ class FormExam extends React.Component {
                   initialValue: editMode ? exam.name : '',
                   rules: [
                     {
-                      // required: true,
+                      required: false,
                       message: 'Nhập tên kỳ thi',
                     },
                   ],
@@ -147,7 +180,7 @@ class FormExam extends React.Component {
                   initialValue: editMode ? exam.rangeTime : '',
                   rules: [
                     {
-                      // required: true,
+                      required: false,
                       message: 'Nhập khoảng thời gian diễn ra kỳ thi',
                     },
                   ],
@@ -161,17 +194,36 @@ class FormExam extends React.Component {
           <Divider />
           <Row gutter={24}>
             <Col>
-              <Table
-                columns={columns(selectRoom)}
-                dataSource={exam.listShift}
-                bordered
-                rowKey={r => r.index}
-                pagination={false}
-                scroll={{ x: 'max-content', y: 500 }}
-              />
+              <Tabs type="card">
+                <TabPane key="exam-shift" tab="Danh sách ca thi">
+                  <Table
+                    columns={columns(selectRoom)}
+                    dataSource={exam.listShift}
+                    bordered
+                    rowKey={r => r.index}
+                    pagination={false}
+                    scroll={{ x: 'max-content', y: 500 }}
+                  />
+                </TabPane>
+                <TabPane key="exam-subject" tab="Danh sách môn thi">
+                  <Table
+                    columns={columnsSubject(this.onOpenModal)}
+                    dataSource={listSubject}
+                    bordered
+                    rowKey={r => r.code}
+                    pagination={false}
+                    scroll={{ x: 'max-content', y: 500 }}
+                  />
+                </TabPane>
+              </Tabs>
             </Col>
           </Row>
         </Form>
+        <ImportModal
+          visible={this.state.visible}
+          subject={subject}
+          closeModal={() => this.setState({ visible: false, subject: {} })}
+        />
       </React.Fragment>
     );
   }
