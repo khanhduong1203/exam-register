@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "8.10.0",
-    "yarn": "1.19.1"
+    "yarn": "1.19.2"
   },
   "dependencies": {
     "@material-ui/core": "^4.4.2",
@@ -15,7 +15,9 @@
     "chai": "^4.2.0",
     "chosen-js": "^1.8.7",
     "customize-cra": "^0.8.0",
+    "exceljs": "^3.4.0",
     "express": "^4.17.1",
+    "file-saver": "^2.0.2",
     "gulp-install": "^1.1.0",
     "immutable": "^4.0.0-rc.12",
     "jquery": "^3.4.1",

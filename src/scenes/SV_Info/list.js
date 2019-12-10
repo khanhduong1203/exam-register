@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Col, Row } from 'antd';
+import {
+  Button, Col, Row, Card,
+} from 'antd';
 import WithAuthentication from '../../hoc/WithAuthentication';
 import select from '../../utils/select';
 import toJS from '../../hoc/ToJS/index';
+import UserForm from './form';
 
+const { Meta } = Card;
 class StudentInfoPage extends Component {
   state = {}
 
@@ -15,13 +19,29 @@ class StudentInfoPage extends Component {
 
   render() {
     const {
-      list, isFetching, history,
+      user, isFetching,
     } = this.props;
     return (
-      <Row>
-        <Col span={14} offset={5}>
-          a
-        </Col>
+      <Row gutter={24}>
+        <Card
+          hoverable
+          title="Thông tin cá nhân"
+        >
+          <Row gutter={24}>
+            <Col span={8}>
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
+              >
+                <Meta title="Ảnh đại diện" />
+              </Card>
+            </Col>
+            <Col span={8}>
+              <UserForm user={user} />
+            </Col>
+          </Row>
+        </Card>
       </Row>
     );
   }

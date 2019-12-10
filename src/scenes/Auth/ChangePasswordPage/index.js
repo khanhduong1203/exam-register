@@ -51,46 +51,45 @@ class ChangePassPage extends Component {
   render() {
     const {
       form: { getFieldDecorator },
-      locale: { trans },
     } = this.props;
     return (
       <Row>
         <Col sm={{ span: 8, offset: 8 }} lg={{ span: 8, offset: 8 }}>
           <Card hoverable={false} hasShadow>
             <Form onSubmit={this.handleSubmit}>
-              <Form.Item label={trans('Old Password')}>
+              <Form.Item label="Mật khẩu cũ">
                 {getFieldDecorator('OldPasswd', {
                   rules: [
                     {
                       required: true,
-                      message: `${trans('Please input your old Password')}!`,
+                      message: 'Nhập mật khẩu hiện tại của bạn !',
                     },
                   ],
-                })(<Input type="password" placeholder={`${trans('Enter your password')} ...`} />)}
+                })(<Input type="password" placeholder="Nhập mật khẩu mới ..." />)}
               </Form.Item>
-              <Form.Item label={trans('New Password')}>
+              <Form.Item label="Mật khẩu mới">
                 {getFieldDecorator('NewPasswd', {
                   rules: [
                     {
                       required: true,
-                      message: `${trans('Please input your new Password')}!`,
+                      message: 'Nhập mật khẩu mới !',
                     },
                   ],
-                })(<Input type="password" placeholder={`${trans('Enter your password')} ...`} />)}
+                })(<Input type="password" placeholder="mật khẩu" />)}
               </Form.Item>
-              <Form.Item label={trans('Confirm Password')}>
+              <Form.Item label="Xác nhận mật khẩu mới">
                 {getFieldDecorator('ConfirmPasswd', {
                   rules: [
                     {
                       required: true,
-                      message: `${trans('Please input your confirm Password')}!`,
+                      message: 'Nhập lại mật khẩu mới',
                     },
                   ],
-                })(<Input type="password" placeholder={`${trans('Enter your password')} ...`} />)}
+                })(<Input type="password" placeholder="mật khẩu" />)}
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" style={{ width: '100%' }} icon="login">
-                  {trans('Confirm')}
+                  {'Xác nhận'}
                 </Button>
               </Form.Item>
             </Form>

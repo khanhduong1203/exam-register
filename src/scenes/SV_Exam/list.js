@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import {
   Button, Col, Row, Table, Icon, Select, notification,
 } from 'antd';
+import Excel from 'exceljs';
+import { saveAs } from 'file-saver';
 import WithAuthentication from '../../hoc/WithAuthentication';
 import select from '../../utils/select';
 import toJS from '../../hoc/ToJS/index';
@@ -80,6 +82,50 @@ class StudentExamPage extends Component {
     notification.success({ message: 'Đăng ký thành công !' });
   }
 
+  getShiftName = (id) => {
+    const { exam } = this.props;
+    let result = '';
+    exam.shifts.forEach((s) => {
+      if (id === s.id) {
+        result = s.name;
+      }
+    });
+    return result;
+  }
+
+  exportFile = async () => {
+    const { exam } = this.props;
+    const wb = new Excel.Workbook();
+    const ws = wb.addWorksheet();
+    ws.addRow(['Kết quả đăng ký thi']); ws.mergeCells('A1:D1');
+    ws.addRow(['Kỳ thi', 'Cuối kì 2']); ws.mergeCells('B2:D2');
+    ws.addRow(['Sinh viên', 'Nguyễn Văn A']); ws.mergeCells('B3:D3');
+    ws.addRow(['Msv', '12316562']); ws.mergeCells('B4:D4');
+    ws.addRow([]); ws.addRow([]); ws.addRow([]);
+    const header = ['STT', 'Tên', 'Mã học phần', 'Ngày thi', 'Ca thi', 'Bắt đầu', 'Kết thúc'];
+    ws.addRow(header);
+    exam.subjects.forEach((s, i) => {
+      const tmp = {
+        stt: i + 1,
+        name: s.name,
+        code: s.code,
+        day: s.day.format('DD-MM-YYYY'),
+        shift: this.getShiftName(s.shift),
+        start: s.start,
+        end: s.end,
+      };
+      ws.addRow(Object.values(tmp));
+    });
+
+    ws.getRow(8).font = { bold: true };
+    // ws.views = [
+    //   { state: 'frozen', xSplit: 1, ySplit: 1 },
+    // ];
+    const buf = await wb.xlsx.writeBuffer();
+
+    saveAs(new Blob([buf]), 'Kết quả đăng ký thi.xlsx');
+  }
+
   render() {
     const {
       exam, isFetching,
@@ -109,6 +155,19 @@ class StudentExamPage extends Component {
               columns={columns(exam.shifts)}
               loading={isFetching}
               pagination={false}
+              footer={() => (
+                <Row gutter={24}>
+                  <Col span={20} />
+                  <Col span={4}>
+                    <Button
+                      style={{ float: 'right', marginRight: '10px' }}
+                      onClick={() => this.exportFile()}
+                    >
+                      {'In đăng ký thi'}
+                    </Button>
+                  </Col>
+                </Row>
+              )}
               scroll={{ x: 'max-content', y: 'max-content' }}
             />
           </Col>
