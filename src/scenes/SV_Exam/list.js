@@ -145,7 +145,7 @@ class StudentExamPage extends Component {
                       style={{ float: 'right', marginRight: '10px', display: 'inline-block' }}
                       onClick={() => this.onRegist()}
                     >
-                      {'Đăng ký'}
+                      Đăng ký
                     </Button>
                   </Col>
                 </Row>
@@ -163,7 +163,7 @@ class StudentExamPage extends Component {
                       style={{ float: 'right', marginRight: '10px' }}
                       onClick={() => this.exportFile()}
                     >
-                      {'In đăng ký thi'}
+                      In đăng ký thi
                     </Button>
                   </Col>
                 </Row>

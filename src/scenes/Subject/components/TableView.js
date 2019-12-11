@@ -119,11 +119,14 @@ export default class TableView extends React.Component {
         sortOrder: sortedInfo.columnKey === 'code' && sortedInfo.order,
       },
     ];
-    const { data, isFetching, history } = this.props;
+    const {
+      data, isFetching, history, getSubjects,
+    } = this.props;
     return (
       <div>
         <Button type="primary" onClick={() => history.push(ROUTER.SUBJECT.ADD)}>+ Thêm mới </Button>
         <Button onClick={this.clearAll} style={{ float: 'right' }}>Bỏ lọc</Button>
+        <Button onClick={getSubjects} style={{ float: 'right', marginRight: '10px' }}>Tải lại</Button>
         <Divider />
         <Table
           columns={columns}

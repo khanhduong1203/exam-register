@@ -38,10 +38,9 @@ class UserWidget extends Component {
       return (
         <Fragment>
           <span style={{ marginRight: 10 }}>
-            {'Xin chào'}
-            {', '}
+            Xin chào,
             <b>{user.get('userName')}</b>
-            {'!'}
+            !
           </span>
           <UserDropdown onClick={this.handleChangePassword}>
             <Avatar

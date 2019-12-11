@@ -5,7 +5,7 @@ import WithAuthentication from '../../hoc/WithAuthentication';
 import List from './components/List';
 import select from '../../utils/select';
 import {
-  getStudentsIfNeed,
+  getStudentsIfNeed, getStudents,
 } from './actions';
 import toJS from '../../hoc/ToJS/index';
 
@@ -19,12 +19,21 @@ class EmployeesPage extends React.Component {
     return state;
   }
 
+  onGetAllStudents = () => {
+    this.props.getStudents();
+  }
+
   render() {
     const {
-      list, isFetching, history, didInvalidate,
+      list, isFetching, history,
     } = this.props;
     return (
-      <List data={list} isFetching={isFetching} history={history} />
+      <List
+        data={list}
+        isFetching={isFetching}
+        history={history}
+        getStudents={this.onGetAllStudents}
+      />
     );
   }
 }
@@ -37,6 +46,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   getStudentsIfNeed: params => dispatch(getStudentsIfNeed(params)),
+  getStudents: params => dispatch(getStudents(params)),
 });
 
 export default WithAuthentication(false)(

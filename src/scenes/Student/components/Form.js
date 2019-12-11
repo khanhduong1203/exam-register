@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Radio, Form, Input, Select, Button, Row, Col, Modal,
+  Radio, Form, Input, Select, Button, Row, Col, Modal, DatePicker,
 } from 'antd';
 
 import ToJS from '../../../hoc/ToJS/index';
@@ -34,7 +34,7 @@ class StudentForm extends Component {
             values,
           );
         } else {
-          this.props.onSubmit(values);
+          this.props.onSubmit({ ...values, date_birth: values.date_birth.format('DD-MM-YYYY') });
         }
       }
     });
@@ -65,8 +65,8 @@ class StudentForm extends Component {
           </Col>
           <Col span={6}>
             <Item label="Mã sinh viên">
-              {getFieldDecorator('code', {
-                initialValue: editMode ? student.code : '',
+              {getFieldDecorator('student_id', {
+                initialValue: editMode ? student.student_id : '',
                 rules: [
                   {
                     required: true,
@@ -102,14 +102,21 @@ class StudentForm extends Component {
             </Item>
           </Col>
           <Col span={6}>
+            <Item label="Ngày sinh">
+              {getFieldDecorator('date_birth', { initialValue: editMode ? student.date_birth : '' })(
+                <DatePicker format="DD-MM-YYYY" />,
+              )}
+            </Item>
+          </Col>
+          <Col span={6}>
             <Item label="Email">
-              {getFieldDecorator('mail', { initialValue: editMode ? student.mail : '' })(<Input type="text" placeholder="Email" />)}
+              {getFieldDecorator('email', { initialValue: editMode ? student.email : '' })(<Input type="text" placeholder="Email" />)}
             </Item>
           </Col>
           <Col span={6}>
             <Item label="Số điện thoại">
-              {getFieldDecorator('phone', {
-                initialValue: editMode ? student.phone : '',
+              {getFieldDecorator('phone_number', {
+                initialValue: editMode ? student.phone_number : '',
                 rules: [
                   {
                     required: true,

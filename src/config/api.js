@@ -23,7 +23,7 @@ const HEADERS = {
 export const API_URLS = {
   ACCOUNT: {
     login: payload => ({
-      endPoint: '/api/v1/login',
+      endPoint: '/api/authenicate',
       method: 'POST',
       headers: HEADERS.DEFAULT_HEADER,
       payload,
@@ -73,7 +73,7 @@ export const API_URLS = {
       headers: HEADERS.header(),
     }),
     insertStudent: () => ({
-      endPoint: '/api/v1/student',
+      endPoint: '/api/student/add',
       method: 'POST',
       headers: HEADERS.header(),
     }),

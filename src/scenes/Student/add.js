@@ -12,6 +12,7 @@ import toJS from '../../hoc/ToJS/index';
 
 class AddStudentPage extends React.Component {
   handleSubmit = (payload) => {
+    console.log(payload);
     this.props.insertStudent(
       payload,
       {

@@ -44,6 +44,8 @@ module.exports = {
     'no-script-url': 0,
     'no-plusplus': 0,
     'no-shadow': 0,
-    'max-len': ["warn", 240]
+    'max-len': ["warn", 240],
+    "linebreak-style": 0,
+    "global-require": 0,
   },
 };

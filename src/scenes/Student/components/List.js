@@ -144,12 +144,15 @@ class StudentList extends React.Component {
         sortOrder: sortedInfo.columnKey === 'time' && sortedInfo.order,
       },
     ];
-    const { data, isFetching, history } = this.props;
+    const {
+      data, isFetching, history, getStudents,
+    } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={() => history.push(ROUTER.STUDENT.ADD)}>+ Thêm mới </Button>
+        <Button type="primary" onClick={() => history.push(ROUTER.STUDENT.ADD)}>+ Thêm mới</Button>
         <Button style={{ marginLeft: '10px' }} onClick={() => this.setState({ visible: true })}>Thêm từ Excel</Button>
         <Button onClick={this.clearAll} style={{ float: 'right' }}>Bỏ lọc</Button>
+        <Button onClick={() => getStudents()} style={{ float: 'right', marginRight: '10px' }}>Tải lại</Button>
         <Divider />
         <Table
           columns={columns}

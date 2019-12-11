@@ -89,7 +89,7 @@ class ChangePassPage extends Component {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" style={{ width: '100%' }} icon="login">
-                  {'Xác nhận'}
+                  Xác nhận
                 </Button>
               </Form.Item>
             </Form>

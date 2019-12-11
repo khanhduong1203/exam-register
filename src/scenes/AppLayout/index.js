@@ -89,6 +89,6 @@ const mapDispatchToProps = dispatch => ({
   pushNotification: payload => dispatch(pushNotification(payload)),
 });
 
-export default WithAuthentication(false)(
+export default WithAuthentication(true)(
   connect(mapStateToProps, mapDispatchToProps)(AppLayout),
 );

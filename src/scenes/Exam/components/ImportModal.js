@@ -163,7 +163,7 @@ class ImportModal extends React.Component {
             <Upload {...props} onChange={this.onImportExcel}>
               <Button>
                 <Icon type="upload" />
-                {'Chọn file'}
+                Chọn file
               </Button>
             </Upload>
             {errorFile && <Alert style={{ marginTop: 10 }} type="error" showIcon message="Chọn file để upload" />}

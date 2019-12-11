@@ -41,6 +41,7 @@ const subjectReducer = (state = initialState, action) => {
     case TYPE.UPDATE_SUBJECT_FAILURE:
       return state.merge({
         isFetching: false,
+        didInvalidate: false,
       });
     default:
       return state;

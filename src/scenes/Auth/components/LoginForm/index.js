@@ -25,7 +25,7 @@ const LoginForm = ({
         validateStatus={error ? 'error' : undefined}
         help={error ? 'Những thông tin không phù hợp với hồ sơ của chúng tôi!' : undefined}
       >
-        {getFieldDecorator('userName', {
+        {getFieldDecorator('username', {
           rules: [{ required: true, message: 'Hãy nhập tên đăng nhập của bạn !' }],
         })(<Input placeholder="Nhập tên đăng nhập của bạn ..." onChange={() => removeError()} />)}
       </Form.Item>

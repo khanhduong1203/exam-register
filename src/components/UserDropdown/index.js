@@ -7,7 +7,7 @@ const UserDropdown = ({ onClick, children }) => (
       <Menu onClick={event => onClick(event)}>
         <Menu.Item key="change-pass">
           <span role="img" aria-label="Password">
-            {'Đổi mật khẩu'}
+            Đổi mật khẩu
           </span>
         </Menu.Item>
       </Menu>

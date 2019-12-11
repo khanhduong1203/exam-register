@@ -27,8 +27,8 @@ class LoginContainer extends Component {
   }
 
     doLogin = (values) => {
-      const { userName, password, remember } = values;
-      this.props.login(userName, password, remember);
+      const { username, password, remember } = values;
+      this.props.login(username, password, remember);
     };
 
     render() {
