@@ -10,3 +10,8 @@ if (process.env.NODE_ENV === 'staging') {
     res.sendFile(path.join('build', 'index.html'));
   });
 }
+
+"engines": {
+  "node": "12.13.1",
+  "yarn": "1.19.2"
+},

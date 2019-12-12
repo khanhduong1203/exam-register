@@ -34,22 +34,22 @@ const authReducer = (state = initialState, action) => {
       if (isSuccessfulApiCall(action)) {
         const {
           token,
-          data,
+          role,
           // SCMtoken,
           // location,
         } = action.payload;
         localStorage.setItem('jwt', token);
         // localStorage.setItem('scm_jwt', SCMtoken);
-        localStorage.setItem('aId', data.id);
+        localStorage.setItem('aId', role.id);
         return state.merge(
           fromJS({
             isAuthenticated: true,
             isFetching: false,
-            authUser: data,
-            role: { Code: data.roll },
-            ID: data.id,
-            UserTypeID: data.id,
+            role,
             error: false,
+            // authUser: data,
+            // ID: data.id,
+            // UserTypeID: data.id,
             // forwardLocation: location || {},
           }),
         );

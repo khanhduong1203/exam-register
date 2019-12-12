@@ -23,7 +23,7 @@ module.exports = {
       ...config,
       proxy: {
         '/api': {
-          target: process.env.REACT_APP_API_DOMAIN,
+          target: 'http://localhost:8080', // process.env.REACT_APP_API_DOMAIN,
           changeOrigin: true,
         },
       },

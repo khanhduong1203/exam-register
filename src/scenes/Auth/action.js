@@ -2,7 +2,7 @@ import { API_URLS } from '../../config/api';
 import { apiCall } from '../../utils/api';
 import { TYPE, PREFIX } from '../../config/actions';
 import select from '../../utils/select';
-import { getDepartments } from '../Exam/action';
+import { getExams } from '../Exam/action';
 
 const loggingIn = {
   type: TYPE.LOG_IN,
@@ -54,16 +54,16 @@ const changePasswordFailure = () => ({
   meta: { prefix: [PREFIX.AUTH, PREFIX.API_CALLED_FAILURE] },
 });
 
-export const login = (userName, password, remember) => async (dispatch) => {
+export const login = (username, password, remember) => async (dispatch) => {
   const api = API_URLS.ACCOUNT.login({
-    userName,
+    username,
     password,
   });
   dispatch(loggingIn);
   const { response, error } = await apiCall(api);
   if (!error && response.status === 200 && response.data.success === true) {
     dispatch(logInSuccess(response.data, remember));
-    dispatch(getDepartments());
+    dispatch(getExams());
   } else {
     dispatch(logInFailure(error));
   }
@@ -75,7 +75,7 @@ const loginWithToken = () => async (dispatch) => {
   const { response, error } = await apiCall(api);
   if (!error && response.status === 200 && response.data.success === true) {
     dispatch(logInSuccessWithToken(response.data));
-    dispatch(getDepartments());
+    dispatch(getExams());
   } else {
     dispatch(logInFailureWithToken(error));
   }

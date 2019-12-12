@@ -12,7 +12,9 @@ import toJS from '../../hoc/ToJS/index';
 const { TabPane } = Tabs;
 
 class EmployeesPage extends React.Component {
-  state = {}
+  state = {
+    data: '',
+  }
 
   static getDerivedStateFromProps(props, state) {
     props.getStudentsIfNeed();
