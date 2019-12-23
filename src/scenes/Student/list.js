@@ -51,9 +51,7 @@ const mapDispatchToProps = dispatch => ({
   getStudents: params => dispatch(getStudents(params)),
 });
 
-export default WithAuthentication(false)(
-  (toJS(connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )((EmployeesPage)))),
-);
+export default (connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(toJS(EmployeesPage)));

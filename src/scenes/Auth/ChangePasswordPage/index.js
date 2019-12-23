@@ -17,9 +17,6 @@ const { pushNotification } = actionContainer;
 class ChangePassPage extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const {
-      locale: { trans },
-    } = this.props;
     this.props.form.validateFields((error, values) => {
       if (!error) {
         this.props.changePassword(
@@ -31,14 +28,14 @@ class ChangePassPage extends Component {
           {
             onSuccess: () => {
               this.props.pushNotification({
-                message: trans('Update password succeeded'),
+                message: 'Cập nhật mật khẩu thành công',
                 type: 'success',
               });
               this.props.history.push(ROUTER.HOME);
             },
             onError: (error) => {
               this.props.pushNotification({
-                message: `${trans('Update password failed')} - ${error}`,
+                message: `Cập nhật bị lỗi - ${error}`,
                 type: 'error',
               });
             },

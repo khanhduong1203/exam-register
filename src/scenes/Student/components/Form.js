@@ -5,6 +5,7 @@ import {
   Radio, Form, Input, Select, Button, Row, Col, Modal, DatePicker,
 } from 'antd';
 
+import moment from 'moment';
 import ToJS from '../../../hoc/ToJS/index';
 
 const { Item } = Form;
@@ -30,8 +31,8 @@ class StudentForm extends Component {
       if (!err) {
         if (this.props.editMode) {
           this.props.onSubmit(
-            this.props.student.id,
-            values,
+            this.props.student.student_id,
+            { ...values, date_birth: values.date_birth.format('DD-MM-YYYY') },
           );
         } else {
           this.props.onSubmit({ ...values, date_birth: values.date_birth.format('DD-MM-YYYY') });
@@ -46,7 +47,7 @@ class StudentForm extends Component {
       editMode,
       student,
     } = this.props;
-
+    // console.log(moment(student.date_birth).format('DD-MM-YYYY'));
     return (
       <Form onSubmit={this.handleSubmit}>
         <Row gutter={24}>
@@ -65,8 +66,8 @@ class StudentForm extends Component {
           </Col>
           <Col span={6}>
             <Item label="Mã sinh viên">
-              {getFieldDecorator('student_id', {
-                initialValue: editMode ? student.student_id : '',
+              {getFieldDecorator('student_code', {
+                initialValue: editMode ? student.student_code : '',
                 rules: [
                   {
                     required: true,
@@ -95,16 +96,17 @@ class StudentForm extends Component {
             <Item label="Giới tính">
               {getFieldDecorator('gender', { initialValue: editMode ? student.gender : '' })(
                 <RadioGroup>
-                  <Radio key={1} value="male">Nam</Radio>
-                  <Radio key={2} value="female">Nữ</Radio>
+                  <Radio key={1} value="Nam">Nam</Radio>
+                  <Radio key={2} value="Nữ">Nữ</Radio>
                 </RadioGroup>,
               )}
             </Item>
           </Col>
           <Col span={6}>
             <Item label="Ngày sinh">
-              {getFieldDecorator('date_birth', { initialValue: editMode ? student.date_birth : '' })(
-                <DatePicker format="DD-MM-YYYY" />,
+              {getFieldDecorator('date_birth',
+                { initialValue: editMode ? moment(student.date_birth, 'DD-MM-YYYY') : '' })(
+                  <DatePicker format="DD-MM-YYYY" />,
               )}
             </Item>
           </Col>

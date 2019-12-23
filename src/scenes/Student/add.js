@@ -31,7 +31,6 @@ class AddStudentPage extends React.Component {
     return (
       <Card
         title="Thêm sinh viên"
-        loading={isFetching}
       >
         <StudentForm
           onSubmit={this.handleSubmit}

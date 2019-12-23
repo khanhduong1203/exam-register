@@ -28,16 +28,11 @@ class RoomForm extends Component {
       if (!err) {
         if (this.props.editMode) {
           this.props.onSubmit(
-            this.props.subject.id,
-            { subject: values },
+            this.props.subject.subject_id,
+            values,
           );
         } else {
-          this.props.onSubmit({
-            subject: {
-              ...values,
-              departmentId: this.props.department.id,
-            },
-          });
+          this.props.onSubmit(values);
         }
       }
     });
@@ -55,8 +50,8 @@ class RoomForm extends Component {
         <Row gutter={24}>
           <Col span={12}>
             <Item label="Tên môn học">
-              {getFieldDecorator('name', {
-                initialValue: editMode ? subject.name : '',
+              {getFieldDecorator('subject_name', {
+                initialValue: editMode ? subject.subject_name : '',
                 rules: [
                   {
                     required: true,
@@ -68,11 +63,11 @@ class RoomForm extends Component {
           </Col>
           <Col span={12}>
             <Item label="Mã môn học">
-              {getFieldDecorator('name', {
-                initialValue: editMode ? subject.code : '',
+              {getFieldDecorator('subject_code', {
+                initialValue: editMode ? subject.subject_code : '',
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: 'Nhập mã phòng',
                   },
                 ],

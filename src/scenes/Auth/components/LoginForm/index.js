@@ -15,7 +15,7 @@ const handleSubmit = (event, form, onSubmit) => {
 };
 
 const LoginForm = ({
-  onSubmit, form, locale, error, removeError,
+  onSubmit, form, error, removeError,
 }) => {
   const { getFieldDecorator } = form;
   return (
@@ -50,7 +50,6 @@ const LoginForm = ({
 LoginForm.propTypes = {
   form: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  locale: PropTypes.object.isRequired,
   error: PropTypes.bool,
   removeError: PropTypes.func,
 };

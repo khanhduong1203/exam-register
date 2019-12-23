@@ -32,6 +32,7 @@ export const apiCall = async ({
     const result = await axios({
       method,
       url: endPoint,
+      // url: `http://localhost:8080${endPoint}`,
       headers,
       data: payload,
       params,

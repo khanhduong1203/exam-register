@@ -12,7 +12,7 @@ import toJS from '../../hoc/ToJS/index';
 
 class AddRoomPage extends React.Component {
   handleSubmit = (payload) => {
-    this.props.insertRoom(
+    this.props.insertSubject(
       payload,
       {
         onSuccess: () => {

@@ -22,7 +22,6 @@ const initialState = fromJS({
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case TYPE.LOG_IN:
-    case TYPE.LOG_IN_TOKEN:
       if (isCallingApi(action)) {
         return state.merge(
           fromJS({
@@ -35,22 +34,52 @@ const authReducer = (state = initialState, action) => {
         const {
           token,
           role,
-          // SCMtoken,
-          // location,
+          refresh_token,
         } = action.payload;
         localStorage.setItem('jwt', token);
-        // localStorage.setItem('scm_jwt', SCMtoken);
-        localStorage.setItem('aId', role.id);
+        localStorage.setItem('refresh_token', refresh_token);
+        localStorage.setItem('role', role);
         return state.merge(
           fromJS({
             isAuthenticated: true,
             isFetching: false,
             role,
             error: false,
-            // authUser: data,
-            // ID: data.id,
-            // UserTypeID: data.id,
-            // forwardLocation: location || {},
+          }),
+        );
+      }
+      if (isFailedApiCall(action)) {
+        return state.merge(
+          fromJS({
+            isAuthenticated: false,
+            isFetching: false,
+            error: true,
+          }),
+        );
+      }
+      return state;
+    case TYPE.LOG_IN_TOKEN:
+      if (isCallingApi(action)) {
+        return state.merge(
+          fromJS({
+            isFetching: true,
+            error: false,
+          }),
+        );
+      }
+      if (isSuccessfulApiCall(action)) {
+        const {
+          token,
+          refresh_token,
+        } = action.payload;
+        localStorage.setItem('jwt', token);
+        localStorage.setItem('refresh_token', refresh_token);
+        return state.merge(
+          fromJS({
+            isAuthenticated: true,
+            isFetching: false,
+            role: localStorage.getItem('role'),
+            error: false,
           }),
         );
       }

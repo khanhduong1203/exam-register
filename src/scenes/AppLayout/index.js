@@ -19,6 +19,7 @@ import ChangePasswordPage from '../Auth/ChangePasswordPage';
 import { pushNotification, popNotification } from './action';
 import StudentInfo from '../SV_Info';
 import ExamRegistration from '../SV_Exam';
+import { logOut } from '../Auth/action';
 
 const { Content, Header } = Layout;
 
@@ -32,12 +33,14 @@ class AppLayout extends Component {
     const {
       user,
       history,
+      logOut,
+      role,
     } = this.props;
     return (
       <Layout
         style={{ minHeight: '100vh' }}
       >
-        <SiderMenu history={history} />
+        <SiderMenu history={history} logOut={logOut} role={role} />
         <Content>
           <Header
             style={{
@@ -57,9 +60,13 @@ class AppLayout extends Component {
           </Header>
           <Content style={{ margin: '16px' }}>
             <div style={{ padding: 24, background: '#fff', minHeight: 550 }}>
-              <Exam history={history} />
-              <Student history={history} />
-              <Subject history={history} />
+              {role === 'admin' && (
+              <React.Fragment>
+                <Exam history={history} />
+                <Student history={history} />
+                <Subject history={history} />
+              </React.Fragment>
+              )}
               <StudentInfo history={history} />
               <ExamRegistration history={history} />
               <Switch>
@@ -87,6 +94,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   popNotification: payload => dispatch(popNotification(payload)),
   pushNotification: payload => dispatch(pushNotification(payload)),
+  logOut: () => dispatch(logOut()),
 });
 
 export default WithAuthentication(true)(

@@ -103,12 +103,12 @@ class StudentList extends React.Component {
     const columns = [
       {
         title: <b>Msv</b>,
-        dataIndex: 'code',
-        key: 'code',
-        sorter: (a, b) => a.code.localeCompare(b.code),
-        sortOrder: sortedInfo.columnKey === 'code' && sortedInfo.order,
-        ...this.getColumnSearchProps('code'),
-        render: (value, record) => <Link to={ROUTER.STUDENT.EDIT.replace(':id', record.id)}>{value}</Link>,
+        dataIndex: 'student_code',
+        key: 'student_code',
+        sorter: (a, b) => a.student_code.localeCompare(b.student_code),
+        sortOrder: sortedInfo.columnKey === 'student_code' && sortedInfo.order,
+        ...this.getColumnSearchProps('student_code'),
+        render: (value, record) => <Link to={ROUTER.STUDENT.EDIT.replace(':id', record.student_code)}>{value}</Link>,
       },
       {
         title: <b>Tên sinh viên</b>,
@@ -117,7 +117,7 @@ class StudentList extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         ...this.getColumnSearchProps('name'),
-        render: (value, record) => <Link to={ROUTER.STUDENT.EDIT.replace(':id', record.id)}>{value}</Link>,
+        render: (value, record) => <Link to={ROUTER.STUDENT.EDIT.replace(':id', record.student_code)}>{value}</Link>,
       },
       {
         title: <b>Lớp</b>,
@@ -131,15 +131,15 @@ class StudentList extends React.Component {
       },
       {
         title: <b>SĐT</b>,
-        dataIndex: 'phone',
-        key: 'phone',
-        sorter: (a, b) => a.phone.toString().localeCompare(b.phone.toString()),
-        sortOrder: sortedInfo.columnKey === 'phone' && sortedInfo.order,
+        dataIndex: 'phone_number',
+        key: 'phone_number',
+        sorter: (a, b) => a.phone_number.toString().localeCompare(b.phone_number.toString()),
+        sortOrder: sortedInfo.columnKey === 'phone_number' && sortedInfo.order,
       },
       {
         title: <b>Mail</b>,
-        dataIndex: 'mail',
-        key: 'mail',
+        dataIndex: 'email',
+        key: 'email',
         sorter: (a, b) => a.time.localeCompare(b.time),
         sortOrder: sortedInfo.columnKey === 'time' && sortedInfo.order,
       },
@@ -162,7 +162,7 @@ class StudentList extends React.Component {
           pagination={{
             showSizeChanger: true,
           }}
-          rowKey={r => r.id}
+          rowKey={r => r.student_code}
         />
         <ImportModal
           visible={this.state.visible}

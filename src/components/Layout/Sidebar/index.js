@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  Layout, Avatar, Menu, Icon,
+  Layout, Avatar, Menu, Icon, Button,
 } from 'antd';
 import { Link } from 'react-router-dom';
 import ROUTER from '../../../constant/router';
@@ -19,7 +19,7 @@ class SiderMenu extends React.Component {
   };
 
   render() {
-    const { history } = this.props;
+    const { history, logOut, role } = this.props;
     const { collapsed } = this.state;
     const pathname = history.location.pathname.split('/')[1];
     const key = pathname.length > 0 ? pathname : 'home';
@@ -40,44 +40,61 @@ class SiderMenu extends React.Component {
           }}
           shape="square"
         />
-        <Menu theme="light" defaultSelectedKeys={[key]} mode="inline">
-          <Menu.Item key="home">
-            <Link to={ROUTER.HOME}>
-              <Icon type="home" />
-              <span>Trang chủ</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="student">
-            <Link to={ROUTER.STUDENT.INDEX}>
-              <Icon type="user" />
-              <span>Quản lý sinh viên</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="subject">
-            <Link to={ROUTER.SUBJECT.INDEX}>
-              <Icon type="hdd" />
-              <span>Quản lý môn học</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="exam">
-            <Link to={ROUTER.EXAM.INDEX}>
-              <Icon type="history" />
-              <span>Kỳ thi</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="student-info">
-            <Link to={ROUTER.STUDENT_INFO.INDEX}>
-              <Icon type="user" />
-              <span>Thông tin cá nhân</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="exam-registration">
-            <Link to={ROUTER.EXAM_REGISTRATION.INDEX}>
-              <Icon type="solution" />
-              <span>Đăng ký thi</span>
-            </Link>
-          </Menu.Item>
-        </Menu>
+        {role === 'admin' ? (
+          <Menu theme="light" defaultSelectedKeys={[key]} mode="inline">
+            <Menu.Item key="home">
+              <Link to={ROUTER.HOME}>
+                <Icon type="home" />
+                <span>Trang chủ</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="student">
+              <Link to={ROUTER.STUDENT.INDEX}>
+                <Icon type="user" />
+                <span>Quản lý sinh viên</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="subject">
+              <Link to={ROUTER.SUBJECT.INDEX}>
+                <Icon type="hdd" />
+                <span>Quản lý môn học</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="exam">
+              <Link to={ROUTER.EXAM.INDEX}>
+                <Icon type="history" />
+                <span>Kỳ thi</span>
+              </Link>
+            </Menu.Item>
+          </Menu>
+        ) : (
+          <Menu theme="light" defaultSelectedKeys={[key]} mode="inline">
+            <Menu.Item key="home">
+              <Link to={ROUTER.HOME}>
+                <Icon type="home" />
+                <span>Trang chủ</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="student-info">
+              <Link to={ROUTER.STUDENT_INFO.INDEX}>
+                <Icon type="user" />
+                <span>Thông tin cá nhân</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="exam-registration">
+              <Link to={ROUTER.EXAM_REGISTRATION.INDEX}>
+                <Icon type="solution" />
+                <span>Đăng ký thi</span>
+              </Link>
+            </Menu.Item>
+            {/* <Menu.Item key="log-out">
+            <Button type="danger" onClick={() => logOut()}>
+              <Icon type="logout" />
+              <span>Đăng xuất</span>
+            </Button>
+          </Menu.Item> */}
+          </Menu>
+        )}
       </Sider>
     );
   }

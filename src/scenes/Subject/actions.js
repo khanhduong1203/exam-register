@@ -9,10 +9,10 @@ export const getSubjects = params => async (dispatch) => {
     type: TYPE.GETTING_SUBJECTS,
   });
   const { response, error } = await apiCall({ ...api, params });
-  if (!error && response.status === 200) {
+  if (!error && response.status === 200 && response.data.success === true) {
     dispatch({
       type: TYPE.GET_SUBJECTS_SUCCESS,
-      payload: response.data !== null ? response.data : [],
+      payload: response.data.data !== null ? response.data.data : [],
     });
   } else {
     dispatch({
@@ -27,10 +27,10 @@ export const getSubject = id => async (dispatch) => {
     type: TYPE.GETTING_SUBJECT,
   });
   const { response, error } = await apiCall(api);
-  if (!error && response.status === 200 && response.data.success === undefined) {
+  if (!error && response.status === 200 && response.data.success === true) {
     dispatch({
       type: TYPE.GET_SUBJECT_SUCCESS,
-      payload: response.data,
+      payload: response.data.data,
     });
   } else {
     dispatch({
@@ -54,7 +54,7 @@ export const insertSubject = (payload, meta) => async (dispatch) => {
     type: TYPE.INSERTING_SUBJECT,
   });
   const { response, error } = await apiCall({ ...api, payload });
-  if (!error && response.status === 200 && response.data.success === undefined) {
+  if (!error && response.status === 200 && response.data.success === true) {
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }
@@ -78,7 +78,7 @@ export const updateSubject = (id, payload, meta) => async (dispatch) => {
     type: TYPE.UPDATING_SUBJECT,
   });
   const { response, error } = await apiCall({ ...api, payload });
-  if (!error && response.status === 200 && response.data.success === undefined) {
+  if (!error && response.status === 200 && response.data.success === true) {
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }

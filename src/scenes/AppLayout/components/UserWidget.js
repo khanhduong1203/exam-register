@@ -13,10 +13,6 @@ import logo from '../../../images/default_avatar.jpg';
 const { logOut } = actionContainer;
 
 class UserWidget extends Component {
-    languageOnChange = (languageKey) => {
-      this.props.locale.setLanguage(languageKey);
-    };
-
     logOut = () => {
       Modal.confirm({
         title: 'Bạn muốn đăng xuất?',

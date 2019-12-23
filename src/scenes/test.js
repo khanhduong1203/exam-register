@@ -1,366 +1,75 @@
-/* eslint-disable no-restricted-globals */
-/* eslint-disable no-plusplus */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-const */
-import React from 'react';
-import PropTypes from 'prop-types';
-import * as XLSX from 'xlsx';
-import {
-  Button, Form, Tabs, Alert, Modal, Row, Table, notification, Col, message,
-} from 'antd';
-import { json2excel } from 'js2excel';
-import WithLoading from '../../../hoc/loading';
-import toJs from '../../../hoc/toJs';
 
-const { TabPane } = Tabs;
-const columns = [
-  {
-    title: 'STT',
-    dataIndex: 'row',
-    key: 'row',
-    width: 150,
-  },
-  {
-    title: 'Mã SP',
-    dataIndex: 'productCode',
-    key: 'productCode',
-    width: 150,
-  },
-  {
-    title: 'TÊN HÀNG HÓA',
-    dataIndex: 'productName',
-    key: 'productName',
-  },
-  {
-    title: 'ĐVT',
-    dataIndex: 'unitName',
-    key: 'unitName',
-    width: 100,
-  },
-  {
-    title: 'ĐƠN GIÁ (VND)',
-    dataIndex: 'pricePerUnit',
-    key: 'pricePerUnit',
-    width: 150,
-  },
-  {
-    title: 'SL',
-    dataIndex: 'quantity',
-    key: 'quantity',
-    width: 100,
-  },
-];
-// eslint-disable-next-line prefer-const
-class UploadForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      errorFile: false,
-      dataNew: [],
-      dataPresent: [],
-      dataError: [],
-      dataPayload: [],
-      tabKey: 'present',
-      fileName: '',
-      name: '',
-      isFetching: false,
-    };
-    this.fileUpload = React.createRef();
-  }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { dataPayload } = this.state;
-    if (dataPayload.length > 0) {
-      this.props.onSubmit(dataPayload);
-      this.setState({
-        errorFile: false,
-        dataNew: [],
-        dataPresent: [],
-        dataError: [],
-        dataPayload: [],
-        tabKey: 'present',
-        fileName: '',
-        name: '',
-        isFetching: false,
-      });
-    } else {
-      message.warning('Chưa có sản phẩm nào');
-    }
-  }
+const router = require('express').Router();
+const config = require('../config');
+const AuthController = require('../controllers/authController');
+const allowOnly = require('../services/routesHelper').allowOnly;
+const UserController = require('../controllers/userController');
+const AdminController = require('../controllers/adminController');
 
-  isUpperCase = (letter) => {
-    for (let i = 0; i < letter.length; i++) {
-      if (letter[i] !== letter[i].toUpperCase()) {
-        return false;
-      }
-    }
-    return true;
-  }
+const APIRoutes = function (passport) {
+  // User api
+  router.post('/signup', AuthController.signUp);
+  router.post('/login', AuthController.login);
+  router.post('/token', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AuthController.token));
+  router.post('/user/:user_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, UserController.updateUserById));
+  router.get('/user/student/:student_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, UserController.getUserIdByStudentId));
+  router.get('/user', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, UserController.getAllUser));
+  router.get('/user/:user_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, UserController.getUserById));
 
-  isItemError = (item) => {
-    if ((item.productCode === undefined || item.quantity === undefined)) {
-      return true;
-    }
-    return false;
-  }
+  // Delete refresh token of an user
+  router.post('/token/reject', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AuthController.rejectRefreshToken));
 
-  isExist = (item) => {
-    let result = false;
-    const { products } = this.props;
-    let { dataPayload } = this.state;
-    for (let i = 0; i < products.length; i++) {
-      if (item.productCode === products[i].productCode) {
-        result = true;
-        const newItem = {
-          ...products[i],
-          price: products[i].pricePerUnit,
-          quantity: item.quantity,
-          totalPrice: products[i].pricePerUnit * Number(item.quantity),
-        };
-        dataPayload.push(newItem);
-        break;
-      }
-    }
-    return result;
-  }
+  // Student api
+  router.get('/student', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student.getAllStudent));
+  router.get('/student/:student_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student.getStudentById));
+  router.post('/student/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student.createStudent));
+  router.post('/student/:student_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student.updateStudentById));
+  router.post('/student/delete/:student_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student.deleteStudentById));
 
-  importExcel = (file) => {
-    const fileReader = new FileReader();
+  // Subject api
+  router.get('/subject', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.subject.getAllSubject));
+  router.get('/subject/:subject_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.subject.getSubjectById));
+  router.post('/subject/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.subject.createNewSubject));
+  router.post('/subject/:subject_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.subject.updateSubjectById));
+  router.post('/subject/delete/:subject_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.subject.deleteSubjectById));
 
-    let dataNew = [];
-    let dataPresent = [];
-    let dataError = [];
+  // Exam api
+  router.get('/exam', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam.getAllExam));
+  router.get('/exam/:exam_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam.getExamById));
+  router.post('/exam/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam.createNewExam));
+  router.post('/exam/:exam_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam.updateExamById));
+  router.post('/exam/delete/:exam_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam.deleteExamById));
 
-    fileReader.onload = (event) => {
-      try {
-        /** convert sheet to json */
-        let startAt = 0;
-        const { result } = event.target;
-        const workbook = XLSX.read(result, { type: 'binary' });
-        const Sheet = workbook.Sheets[workbook.SheetNames[0]];
-        let data = XLSX.utils.sheet_to_json(Sheet);
-        console.log(data);
-        for (let i = 1; i <= data.length; i++) {
-          const flagCell = Sheet[`A${i}`];
-          if (flagCell !== undefined) {
-            if (flagCell.v === 'STT') {
-              startAt = i;
-              // 13
-              break;
-            }
-          }
-        }
-        if (startAt === 0) {
-          notification.error({ message: 'upload failed!' });
-          this.setState({ isFetching: false, name: '' });
-        } else {
-          this.setState({ isFetching: true });
-          data = XLSX.utils.sheet_to_json(Sheet, { range: startAt, header: ['row', 'productCode', 'productName', 'unitName', 'quantity'] });
-          /** format empty cell */
-          data.forEach((item, index) => {
-            if (item.row !== undefined) {
-              item.row = (item.row.toString().trim() === '') ? undefined : item.row.toString().trim();
-            }
-            if (item.productCode !== undefined) {
-              item.productCode = (item.productCode.toString().trim() === '') ? undefined : item.productCode.toString().trim();
-            }
-            if (item.productName !== undefined) {
-              item.productName = (item.productName.toString().trim() === '') ? undefined : item.productName.toString().trim();
-            }
-            if (item.unitName !== undefined) {
-              item.unitName = (item.unitName.toString().trim() === '') ? undefined : item.unitName.toString().trim();
-            }
-            if (item.quantity !== undefined) {
-              item.quantity = (item.quantity.toString().trim() === '') ? undefined : item.quantity.toString().trim();
-            }
-          });
-          /** read each row */
-          data.forEach((item, index) => {
-            if (this.isItemError(item)) {
-              dataError.push(item);
-            } else {
-              // eslint-disable-next-line no-lonely-if
-              if (this.isExist(item)) {
-                const x = this.props.products.filter(e => e.productCode === item.productCode)[0];
-                dataPresent.push({ ...item, pricePerUnit: x.pricePerUnit });
-              } else {
-                dataNew.push(item);
-              }
-            }
-          });
-          notification.success({ message: 'upload success!' });
-          this.setState({
-            dataNew, dataError, dataPresent, isFetching: false,
-          });
-        }
-      } catch (e) {
-        notification.error({ message: e });
-        this.setState({ isFetching: false, name: '' });
-      }
-    };
-    fileReader.readAsBinaryString(file);
-  }
+  // Exam shift api
+  router.get('/exam_shift', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam_shift.getAllExamShift));
+  router.get('/exam_shift/:exam_shift_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam_shift.getExamShiftById));
+  router.post('/exam_shift/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_shift.createNewExamShift));
+  router.post('/exam_shift/:exam_shift_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_shift.updateExamShiftById));
+  router.post('/exam_shift/delete/:exam_shift_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_shift.deleteExamShiftById));
 
-  onImportExcel = (event) => {
-    const { files } = event.target;
-    if (files.length === 1) {
-      // Process a file if we have exactly one
-      this.setState({ name: files[0].name.replace('.xlsx' || '.xls', ''), isFetching: true });
-      this.importExcel(files[0]);
-    }
-  }
+  // Exam room api
+  router.get('/exam_room', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam_room.getAllExamRoom));
+  router.get('/exam_room/:exam_room_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam_room.getExamRoomById));
+  router.post('/exam_room/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_room.createNewExamRoom));
+  router.post('/exam_room/:exam_room_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_room.updateExamRoomById));
+  router.post('/exam_room/delete/:exam_room_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_room.deleteExamRoomById));
 
-  exportExcel = () => {
-    const {
-      dataError, dataNew, dataPresent, tabKey,
-    } = this.state;
-    // eslint-disable-next-line no-nested-ternary
-    let data = [];
-    if (tabKey === 'present') {
-      data = dataPresent;
-    } else {
-      data = (tabKey === 'new') ? dataNew : dataError;
-    }
-    data = data.map((item) => {
-      const newItem = {};
-      newItem.STT = item.row;
-      newItem['MÃ SP'] = item.productCode;
-      newItem['TÊN HÀNG HÓA'] = item.productName;
-      newItem['ĐVT'] = item.unitName;
-      newItem['ĐƠN GIÁ (VND)'] = item.pricePerUnit;
-      newItem['GHI CHÚ'] = item.quantity;
-      return newItem;
-    });
-    try {
-      json2excel({
-        data,
-        name: tabKey,
-        formateDate: 'yyyy/mm/dd',
-      });
-    } catch (e) {
-      notification.error({ message: 'Lỗi ! Có thể trình duyệt của bạn không hỗ trợ ! Vui lòng liên hệ nhà phát triển !' });
-    }
-  };
+  // Exam schedule api
+  router.get('/exam_schedule', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam_schedule.getAllExamSchedule));
+  router.get('/exam_schedule/:exam_schedule_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.user, AdminController.exam_schedule.getExamScheduleById));
+  router.post('/exam_schedule/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_schedule.createNewExamSchedule));
+  router.post('/exam_schedule/:exam_schedule_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_schedule.updateExamScheduleById));
+  router.post('/exam_schedule/delete/:exam_schedule_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.exam_schedule.deleteExamScheduleById));
 
-  render() {
-    const { visible, onCloseModal } = this.props;
-    const {
-      errorFile, dataNew, dataPresent, dataError, isFetching, tabKey,
-    } = this.state;
-    return (
-      <Modal
-        visible={visible}
-        closable={false}
-        width="90%"
-        footer={[
-          <Button
-            type="primary"
-            icon="plus"
-            key="submit"
-            disabled={tabKey !== 'present'}
-            loading={isFetching}
-            onClick={this.handleSubmit}
-          >
-            {'Thêm sản phẩm vào đơn hàng'}
-          </Button>,
-          <Button
-            key="close"
-            icon="close"
-            onClick={onCloseModal}
-            disabled={isFetching}
-          >
-              Đóng cửa sổ
-          </Button>,
-        ]}
-      >
-        {
-          (
-            <React.Fragment>
-              <Row gutter={24}>
-                <Col span={12}>
-                  <input
-                    disabled={isFetching}
-                    id="fileUpload"
-                    type="file"
-                    ref={(v) => {
-                      this.fileUpload = v;
-                    }}
-                    value={this.state.fileName}
-                    accept=".xlsx, .xls"
-                    onChange={this.onImportExcel}
-                  />
-                  {errorFile && <Alert style={{ marginTop: 10 }} type="error" showIcon message="Chọn file để upload" />}
-                </Col>
-              </Row>
-              <Row gutter={24}>
-                <Tabs defaultActiveKey="present" onChange={key => this.setState({ tabKey: key })}>
-                  <TabPane tab={`Sản phẩm đã có sẵn (${dataPresent.length})`} key="present">
-                    <Button onClick={this.exportExcel}>Tải xuống</Button>
-                    <Table
-                      dataSource={dataPresent}
-                      columns={columns}
-                      loading={isFetching}
-                      rowKey={record => record.productCode}
-                      rowClassName={(r, idx) => (idx % 2 ? 'whitesmoke' : '')}
-                      pagination={{
-                        showTotal: (total, range) => `${range[0]}-${range[1]} trong ${total} mặt hàng`,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['5', '10', '15', '20'],
-                      }}
-                      scroll={{ y: 320 }}
-                    />
-                  </TabPane>
-                  <TabPane tab={`Sản phẩm mới (${dataNew.length})`} key="new">
-                    <Button onClick={this.exportExcel}>Tải xuống</Button>
-                    <Table
-                      dataSource={dataNew}
-                      columns={columns}
-                      loading={isFetching}
-                      rowKey={record => record.productCode}
-                      rowClassName={(r, idx) => (idx % 2 ? 'whitesmoke' : '')}
-                      pagination={{
-                        showTotal: (total, range) => `${range[0]}-${range[1]} trong ${total} mặt hàng`,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['5', '10', '15', '20'],
-                      }}
-                      scroll={{ y: 320 }}
-                    />
-                  </TabPane>
-                  <TabPane tab={`Sản phẩm lỗi (${dataError.length})`} key="error">
-                    <Button onClick={this.exportExcel}>Tải xuống</Button>
-                    <Table
-                      dataSource={dataError}
-                      columns={columns}
-                      loading={isFetching}
-                      rowKey={record => record.productCode}
-                      rowClassName={(r, idx) => (idx % 2 ? 'whitesmoke' : '')}
-                      pagination={{
-                        showTotal: (total, range) => `${range[0]}-${range[1]} trong ${total} mặt hàng`,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['5', '10', '15', '20'],
-                      }}
-                      scroll={{ y: 320 }}
-                    />
-                  </TabPane>
-                </Tabs>
-              </Row>
-            </React.Fragment>
-          )
-        }
-      </Modal>
-    );
-  }
-}
+  // Student-subject api
+  router.get('/student_subject', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student_subject.getAllStudentSubject));
+  router.get('/student_subject/:student_subject_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student_subject.getStudentSubjectById));
+  router.post('/student_subject/create', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student_subject.createNewStudentSubject));
+  router.post('/student_subject/:student_subject_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student_subject.updateStudentSubjectById));
+  router.post('/student_subject/delete/:student_subject_id', passport.authenticate('jwt', { session: false }), allowOnly(config.accessLevels.admin, AdminController.student_subject.deleteStudentSubjectById));
 
-UploadForm.propTypes = {
-  onUpload: PropTypes.func,
-  visible: PropTypes.bool.isRequired,
-  onCloseModal: PropTypes.func.isRequired,
-  isFetching: PropTypes.bool,
+  return router;
 };
 
-UploadForm.defaultProps = { onUpload: () => {} };
-
-export default WithLoading(toJs(Form.create()(UploadForm)));
+module.exports = APIRoutes;

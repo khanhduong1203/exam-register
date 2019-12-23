@@ -3,7 +3,13 @@ const HEADERS = {
     'Content-Type': 'application/json; charset=UTF-8',
   },
   header: () => ({
+    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    Authorization: localStorage.getItem('jwt'),
+  }),
+  rawHeader: () => ({
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'raw',
     Authorization: localStorage.getItem('jwt'),
   }),
   jsonHeader: () => ({
@@ -23,41 +29,127 @@ const HEADERS = {
 export const API_URLS = {
   ACCOUNT: {
     login: payload => ({
-      endPoint: '/api/authenticate',
+      endPoint: '/api/login',
       method: 'POST',
       headers: HEADERS.DEFAULT_HEADER,
       payload,
     }),
     loginWithToken: () => ({
-      endPoint: '/api/v1/login/token',
+      endPoint: '/api/token',
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     changePassword: () => ({
-      endPoint: '/api/v1/login/users/change_password',
-      method: 'PUT',
+      endPoint: '/api/login/change_password',
+      method: 'POST',
       headers: HEADERS.header(),
     }),
   },
   EXAM: {
     getExams: () => ({
-      endPoint: '/api/v1/exam/all',
+      endPoint: '/api/exam',
       method: 'GET',
       headers: HEADERS.header(),
     }),
     getExam: id => ({
-      endPoint: `/api/v1/exam/${id}`,
+      endPoint: `/api/exam/${id}`,
       method: 'GET',
       headers: HEADERS.header(),
     }),
     createExam: () => ({
-      endPoint: '/api/v1/exam',
+      endPoint: '/api/exam/create',
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
+    updateExam: id => ({
+      endPoint: `/api/exam/${id}`,
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
+    deleteExam: id => ({
+      endPoint: `/api/exam/delete/${id}`,
       method: 'POST',
       headers: HEADERS.header(),
     }),
-    updateExam: id => ({
-      endPoint: `/api/v1/exam/${id}`,
-      method: 'PUT',
+  },
+  EXAM_SHIFT: {
+    getExamShifts: () => ({
+      endPoint: '/api/exam_shift',
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    getExamShift: id => ({
+      endPoint: `/api/exam_shift/${id}`,
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    createExamShift: () => ({
+      endPoint: '/api/exam_shift/create',
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+    updateExamShift: id => ({
+      endPoint: `/api/exam_shift/${id}`,
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+    deleteExamShift: id => ({
+      endPoint: `/api/exam_shift/delete/${id}`,
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+  },
+  EXAM_ROOM: {
+    getExamRooms: () => ({
+      endPoint: '/api/exam_room',
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    getExamRoom: id => ({
+      endPoint: `/api/exam_room/${id}`,
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    createExamRoom: () => ({
+      endPoint: '/api/exam_room/create',
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+    updateExamRoom: id => ({
+      endPoint: `/api/exam_room/${id}`,
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+    deleteExamRoom: id => ({
+      endPoint: `/api/exam_room/delete/${id}`,
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+  },
+  SCHEDULE: {
+    getExamSchedules: () => ({
+      endPoint: '/api/exam_schedule',
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    getExamSchedule: id => ({
+      endPoint: `/api/exam_schedule/${id}`,
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    createExamSchedule: () => ({
+      endPoint: '/api/exam_schedule/create',
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+    updateExamSchedule: id => ({
+      endPoint: `/api/exam_schedule/${id}`,
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+    deleteExamSchedule: id => ({
+      endPoint: `/api/exam_schedule/delete/${id}`,
+      method: 'POST',
       headers: HEADERS.header(),
     }),
   },
@@ -68,50 +160,77 @@ export const API_URLS = {
       headers: HEADERS.header(),
     }),
     getStudent: id => ({
-      endPoint: `/api/v1/student/${id}`,
+      endPoint: `/api/student/student_code/${id}`,
       method: 'GET',
       headers: HEADERS.header(),
     }),
     insertStudent: () => ({
-      endPoint: '/api/student/add',
+      endPoint: '/api/student/create',
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     updateStudent: id => ({
-      endPoint: `/api/v1/student/${id}`,
-      method: 'PUT',
-      headers: HEADERS.header(),
+      endPoint: `/api/student/${id}`,
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
     }),
     deleteStudent: id => ({
-      endPoint: `/api/v1/student/${id}`,
-      method: 'DELETE',
-      headers: HEADERS.header(),
+      endPoint: `/api/student/delete/${id}`,
+      method: 'POST',
+      headers: HEADERS.rawHeader(),
     }),
   },
   SUBJECT: {
     getSubjects: () => ({
-      endPoint: '/api/v1/subject',
+      endPoint: '/api/subject',
+      method: 'GET',
+      headers: HEADERS.rawHeader(),
+    }),
+    insertSubject: () => ({
+      endPoint: '/api/subject/create',
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
+    getSubject: id => ({
+      endPoint: `/api/subject/subject_code/${id}`,
+      method: 'GET',
+      headers: HEADERS.rawHeader(),
+    }),
+    updateSubject: id => ({
+      endPoint: `/api/subject/${id}`,
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
+    deleteSubject: id => ({
+      endPoint: `/api/subject/delete/${id}`,
+      method: 'POST',
+      headers: HEADERS.rawHeader(),
+    }),
+  },
+  STUDENT_SUBJECT: {
+    getStudentSubjects: () => ({
+      endPoint: '/api/student_subject',
       method: 'GET',
       headers: HEADERS.header(),
     }),
-    insertSubject: () => ({
-      endPoint: '/api/v1/subject',
+    getStudentSubject: id => ({
+      endPoint: `/api/student_subject/${id}`,
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    createStudentSubject: () => ({
+      endPoint: '/api/student_subject/create',
       method: 'POST',
       headers: HEADERS.header(),
     }),
-    getSubject: id => ({
-      endPoint: `/api/v1/subject/${id}`,
-      method: 'GET',
+    updateStudentSubject: id => ({
+      endPoint: `/api/student_subject/${id}`,
+      method: 'POST',
       headers: HEADERS.header(),
     }),
-    updateSubject: id => ({
-      endPoint: `/api/v1/subject/${id}`,
-      method: 'PUT',
-      headers: HEADERS.header(),
-    }),
-    deleteSubject: id => ({
-      endPoint: `/api/v1/subject/${id}`,
-      method: 'DELETE',
+    deleteStudentSubject: id => ({
+      endPoint: `/api/student_subject/delete/${id}`,
+      method: 'POST',
       headers: HEADERS.header(),
     }),
   },

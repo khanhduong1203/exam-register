@@ -103,20 +103,20 @@ export default class TableView extends React.Component {
     filteredInfo = filteredInfo || {};
     const columns = [
       {
-        title: <b>Tên học phần</b>,
-        dataIndex: 'name',
-        key: 'name',
-        sorter: (a, b) => a.name.localeCompare(b.name),
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        ...this.getColumnSearchProps('name'),
-        render: (value, record) => <Link to={ROUTER.SUBJECT.EDIT.replace(':id', record.id)}>{value}</Link>,
+        title: <b>Mã học phần</b>,
+        dataIndex: 'subject_code',
+        key: 'subject_code',
+        sorter: (a, b) => a.subject_code - b.subject_code,
+        sortOrder: sortedInfo.columnKey === 'subject_code' && sortedInfo.order,
+        render: (value, record) => <Link to={ROUTER.SUBJECT.EDIT.replace(':id', record.subject_code)}>{value}</Link>,
       },
       {
-        title: <b>Mã</b>,
-        dataIndex: 'code',
-        key: 'code',
-        sorter: (a, b) => a.code - b.code,
-        sortOrder: sortedInfo.columnKey === 'code' && sortedInfo.order,
+        title: <b>Tên học phần</b>,
+        dataIndex: 'subject_name',
+        key: 'subject_name',
+        sorter: (a, b) => a.subject_name.localeCompare(b.subject_name),
+        sortOrder: sortedInfo.columnKey === 'subject_name' && sortedInfo.order,
+        ...this.getColumnSearchProps('subject_name'),
       },
     ];
     const {
@@ -133,7 +133,7 @@ export default class TableView extends React.Component {
           dataSource={data}
           onChange={this.handleChange}
           loading={isFetching}
-          rowKey={record => record.id}
+          rowKey={record => record.subject_id}
         />
       </div>
     );

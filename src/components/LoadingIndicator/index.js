@@ -6,7 +6,7 @@ const LoadingIndicator = ({ style }) => (
   <Spin
     size="large"
     spinning
-    tip="Loading..."
+    tip="Đang tải..."
     style={{ maxHeight: '100%', textAlign: 'center', ...style }}
     indicator={<Icon type="loading" style={{ fontSize: 30 }} spin />}
   />

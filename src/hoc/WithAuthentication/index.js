@@ -20,28 +20,34 @@ export default function withAuthentication(needAuthenticated) {
         this.state = {};
       }
 
-      // static getDerivedStateFromProps(nextProps) {
-      //   nextProps.loginWithTokenIfNeed();
-      //   return null;
-      // }
+      static getDerivedStateFromProps(nextProps) {
+        nextProps.loginWithTokenIfNeed();
+        return null;
+      }
+
+      isValid = (text) => {
+        if (text !== null && text !== undefined && text !== '') {
+          return true;
+        }
+        return false;
+      }
 
       render() {
-        const { isAuthenticated, isFetching, error } = this.props;
-        // console.log(API_URLS.NOTI.getNotiById().name)
+        const {
+          isAuthenticated, isFetching, error, role,
+        } = this.props;
         if (!needAuthenticated) {
           return <WrappedComponent {...this.props} />;
         }
         if (isAuthenticated) {
           return <WrappedComponent {...this.props} />;
         }
-        if (!isFetching && !isAuthenticated && error) {
+        if (!isAuthenticated && error && !isFetching) {
           return (
-          // <Router>
             <Redirect to={ROUTER.AUTH.LOGIN} />
-          // </Router>
           );
         }
-        if (isFetching || localStorage.getItem('jwt')) {
+        if (isFetching) {
           return (
             <div style={{
               height: '100vh',
@@ -51,6 +57,7 @@ export default function withAuthentication(needAuthenticated) {
             }}
             >
               <LoadingIndicator />
+              <b>KKKKK</b>
             </div>
           );
         }
@@ -67,6 +74,7 @@ export default function withAuthentication(needAuthenticated) {
         isAuthenticated: select(state, 'authReducer', 'isAuthenticated'),
         isFetching: select(state, 'authReducer', 'isFetching'),
         error: select(state, 'authReducer', 'error'),
+        role: select(state, 'authReducer', 'role'),
       };
     }
 

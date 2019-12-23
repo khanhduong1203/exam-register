@@ -45,9 +45,7 @@ const mapDispatchToProps = dispatch => ({
   getSubjects: params => dispatch(getSubjects(params)),
 });
 
-export default WithAuthentication(false)(
-  (toJS(connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )((SubjectsPage)))),
-);
+export default (connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(toJS(SubjectsPage)));

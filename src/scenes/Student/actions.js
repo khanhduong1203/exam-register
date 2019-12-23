@@ -9,10 +9,10 @@ export const getStudents = params => async (dispatch) => {
     type: TYPE.GETTING_STUDENTS,
   });
   const { response, error } = await apiCall({ ...api, params });
-  if (!error && response.status === 200 && response.data.success === undefined) {
+  if (!error && response.status === 200 && response.data.success === true) {
     dispatch({
       type: TYPE.GET_STUDENTS_SUCCESS,
-      payload: response.data,
+      payload: response.data.data,
     });
   } else {
     dispatch({
@@ -37,10 +37,10 @@ export const getStudent = id => async (dispatch) => {
     meta: { prefix: [PREFIX.STUDENT, PREFIX.API_CALLING] },
   });
   const { response, error } = await apiCall(api);
-  if (!error && response.status === 200 && response.data.success === undefined) {
+  if (!error && response.status === 200 && response.data.success === true) {
     dispatch({
       type: TYPE.GET_STUDENT_SUCCESS,
-      payload: response.data,
+      payload: response.data.data,
     });
   } else {
     dispatch({
@@ -55,7 +55,7 @@ export const insertStudent = (payload, meta) => async (dispatch) => {
     type: TYPE.INSERTING_STUDENT,
   });
   const { response, error } = await apiCall({ ...api, payload });
-  if (!error && (response.status === 200 || response.status === 201) && response.data.success === undefined) {
+  if (!error && response.status === 200 && response.data.success === true) {
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }
@@ -79,7 +79,8 @@ export const updateStudent = (id, payload, meta) => async (dispatch) => {
     type: TYPE.UPDATING_STUDENT,
   });
   const { response, error } = await apiCall({ ...api, payload });
-  if (!error && response.status === 200 && response.data.success === undefined) {
+  console.log(response);
+  if (!error && response.status === 200 && response.data.success === true) {
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }

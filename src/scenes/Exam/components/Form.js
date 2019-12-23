@@ -92,15 +92,38 @@ const columns = selectRoom => [
 const columnsSubject = openModal => [
   {
     title: <b>Tên môn thi</b>,
-    dataIndex: 'name',
+    dataIndex: 'subject_name',
   },
   {
     title: <b>Mã môn thi</b>,
-    dataIndex: 'code',
+    dataIndex: 'subject_id',
   },
   {
     title: <b>Danh sách sinh viên</b>,
     render: (value, record) => <Button onClick={() => openModal(record)}>Chọn file</Button>,
+  },
+];
+
+const columnsRoom = () => [
+  {
+    title: <b>Mã phòng thi</b>,
+    dataIndex: 'exam_room_id',
+  },
+  {
+    title: <b>Tên phòng thi</b>,
+    dataIndex: 'room_name',
+  },
+  {
+    title: <b>Địa điểm</b>,
+    dataIndex: '',
+  },
+  {
+    title: <b>Số máy tính tối đa</b>,
+    dataIndex: '',
+  },
+  {
+    title: <b>Số máy đã đăng ký</b>,
+    dataIndex: '',
   },
 ];
 class FormExam extends React.Component {
@@ -148,7 +171,7 @@ class FormExam extends React.Component {
       <React.Fragment>
         <Form onSubmit={this.handleSubmit}>
           <Row gutter={24}>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Item label="Tên kỳ thi">
                 {getFieldDecorator('name', {
                   initialValue: editMode ? exam.name : '',
@@ -189,18 +212,18 @@ class FormExam extends React.Component {
             </Col>
             <Col span={4}>
               <Button type="primary" style={{ width: '100%', marginTop: '40px', float: 'right' }} onClick={this.handleSubmit}>OK</Button>
-            </Col>
+            </Col> */}
           </Row>
-          <Divider />
+          {/* <Divider /> */}
           <Row gutter={24}>
             <Col>
               <Tabs type="card">
-                <TabPane key="exam-shift" tab="Danh sách ca thi">
+                <TabPane key="exam-room" tab="Danh sách phòng thi">
                   <Table
-                    columns={columns(selectRoom)}
-                    dataSource={exam.listShift}
+                    columns={columnsRoom()}
+                    dataSource={[]}
                     bordered
-                    rowKey={r => r.index}
+                    rowKey={r => r.exam_room_id}
                     pagination={false}
                     scroll={{ x: 'max-content', y: 500 }}
                   />
@@ -210,9 +233,22 @@ class FormExam extends React.Component {
                     columns={columnsSubject(this.onOpenModal)}
                     dataSource={listSubject}
                     bordered
-                    rowKey={r => r.code}
+                    rowKey={r => r.subject_id}
                     pagination={false}
                     scroll={{ x: 'max-content', y: 500 }}
+                  />
+                </TabPane>
+                <TabPane key="exam-shift" tab="Danh sách ca thi">
+                  <Table
+                    columns={columns(selectRoom)}
+                    dataSource={[]}
+                    bordered
+                    rowKey={r => r.index}
+                    pagination={false}
+                    scroll={{ x: 'max-content', y: 500 }}
+                    footer={() => (
+                      <Button type="primary">Cập nhật</Button>
+                    )}
                   />
                 </TabPane>
               </Tabs>

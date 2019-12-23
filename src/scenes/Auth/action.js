@@ -16,7 +16,7 @@ export const loggingInWithToken = {
 
 const logInSuccessWithToken = (payload, location) => ({
   type: TYPE.LOG_IN_TOKEN,
-  payload: { ...payload, location },
+  payload,
   meta: { prefix: [PREFIX.AUTH, PREFIX.API_CALLED_SUCCESS] },
 });
 
@@ -62,8 +62,8 @@ export const login = (username, password, remember) => async (dispatch) => {
   dispatch(loggingIn);
   const { response, error } = await apiCall(api);
   if (!error && response.status === 200 && response.data.success === true) {
-    dispatch(logInSuccess(response.data, remember));
-    dispatch(getExams());
+    dispatch(logInSuccess(response.data.data, remember));
+    // dispatch(getExams());
   } else {
     dispatch(logInFailure(error));
   }
@@ -71,11 +71,14 @@ export const login = (username, password, remember) => async (dispatch) => {
 
 const loginWithToken = () => async (dispatch) => {
   const api = API_URLS.ACCOUNT.loginWithToken();
-  // dispatch(loggingInWithToken);
-  const { response, error } = await apiCall(api);
+  dispatch(loggingInWithToken);
+  const username = localStorage.getItem('role');
+  const refresh_token = localStorage.getItem('refresh_token');
+  const payload = { username, refresh_token };
+  const { response, error } = await apiCall({ ...api, payload });
   if (!error && response.status === 200 && response.data.success === true) {
-    dispatch(logInSuccessWithToken(response.data));
-    dispatch(getExams());
+    dispatch(logInSuccessWithToken(response.data.data));
+    // dispatch(getExams());
   } else {
     dispatch(logInFailureWithToken(error));
   }

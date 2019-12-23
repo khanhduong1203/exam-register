@@ -26,14 +26,13 @@ class LoginWrapper extends Component {
 
   render() {
     const {
-      locale,
       doLogin,
     } = this.props;
     const { error } = this.state;
     return (
       <Card hoverable={false} clickable={false} hasShadow>
         <h1 style={{ textAlign: 'center' }}>Đăng nhập</h1>
-        <Form error={error} onSubmit={values => doLogin(values)} locale={locale} removeError={() => this.removeError()} />
+        <Form error={error} onSubmit={values => doLogin(values)} removeError={() => this.removeError()} />
         <div>
           <Link to="/" style={{ float: 'right' }}>
             Quên mật khẩu?
@@ -46,7 +45,6 @@ class LoginWrapper extends Component {
 
 LoginWrapper.propTypes = {
   doLogin: PropTypes.func.isRequired,
-  locale: PropTypes.object.isRequired,
 };
 
 export default ((LoginWrapper));
