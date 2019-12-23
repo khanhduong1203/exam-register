@@ -54,7 +54,7 @@ export const API_URLS = {
     getExam: id => ({
       endPoint: `/api/exam/${id}`,
       method: 'GET',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     createExam: () => ({
       endPoint: '/api/exam/create',
@@ -72,6 +72,39 @@ export const API_URLS = {
       headers: HEADERS.header(),
     }),
   },
+  EXAM_SCHEDULE: {
+    getExamSchedules: () => ({
+      endPoint: '/api/exam_schedule',
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    getExamSchedule: id => ({
+      endPoint: `/api/exam_schedule/${id}`,
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    getExamScheduleByExamId: id => ({
+      endPoint: `/api/exam_schedule/exam_id/${id}`,
+      method: 'GET',
+      headers: HEADERS.header(),
+    }),
+    createExamSchedule: () => ({
+      endPoint: '/api/exam_schedule/create',
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
+    updateExamSchedule: id => ({
+      endPoint: `/api/exam_schedule/${id}`,
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
+    deleteExamSchedule: id => ({
+      endPoint: `/api/exam_schedule/delete/${id}`,
+      method: 'POST',
+      headers: HEADERS.header(),
+    }),
+  },
+
   EXAM_SHIFT: {
     getExamShifts: () => ({
       endPoint: '/api/exam_shift',

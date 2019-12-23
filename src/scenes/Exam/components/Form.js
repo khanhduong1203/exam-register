@@ -6,6 +6,7 @@ import moment from 'moment';
 import ToJS from '../../../hoc/ToJS';
 import { ROOM, SUBJECT } from '../../../constant/enum';
 import ImportModal from './ImportModal';
+import EditTable from './EditTable';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -25,105 +26,30 @@ function getNumberComputer(arr) {
   return num;
 }
 
-const columns = selectRoom => [
-  {
-    title: <b>STT</b>,
-    width: 100,
-    fixed: 'left',
-    render: (value, record, index) => index + 1,
-  },
-  {
-    title: <b>Tên ca thi</b>,
-    dataIndex: 'index',
-    width: 100,
-    fixed: 'left',
-    render: value => `Ca ${value}`,
-  },
-  {
-    title: <b>Phòng thi</b>,
-    dataIndex: 'room',
-    width: 150,
-    render: (value, record) => (
-      <Select
-        mode="multiple"
-        maxTagCount={0}
-        defaultValue={value}
-        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-        onChange={val => selectRoom(val, record.index)}
-      >
-        {ROOM.map(e => (<Option value={e.id}>{e.name}</Option>))}
-      </Select>
-    ),
-  },
-  {
-    title: <b>Số máy tối đa</b>,
-    width: 150,
-    render: (value, record) => getNumberComputer(record.room),
-  },
-  {
-    title: <b>Giờ băt đầu</b>,
-    dataIndex: 'start',
-    width: 150,
-    render: value => <TimePicker defaultValue={moment(value, 'HH:mm')} format="HH:mm" />,
-  },
-  {
-    title: <b>Giờ kết thúc</b>,
-    dataIndex: 'end',
-    width: 150,
-    render: value => <TimePicker defaultValue={moment(value, 'HH:mm')} format="HH:mm" />,
-  },
-  {
-    title: <b>Môn thi</b>,
-    dataIndex: 'subject',
-    width: 150,
-    render: value => (
-      <Select
-        mode="multiple"
-        defaultValue={value}
-        maxTagCount={0}
-        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-      >
-        {SUBJECT.map(e => (<Option value={e.id}>{e.name}</Option>))}
-      </Select>
-    ),
-  },
-];
-
-const columnsSubject = openModal => [
+const columnsSchedule = () => [
   {
     title: <b>Tên môn thi</b>,
     dataIndex: 'subject_name',
   },
   {
     title: <b>Mã môn thi</b>,
-    dataIndex: 'subject_id',
+    dataIndex: 'subject_code',
   },
   {
-    title: <b>Danh sách sinh viên</b>,
-    render: (value, record) => <Button onClick={() => openModal(record)}>Chọn file</Button>,
-  },
-];
-
-const columnsRoom = () => [
-  {
-    title: <b>Mã phòng thi</b>,
-    dataIndex: 'exam_room_id',
+    title: <b>Ca thi</b>,
+    dataIndex: 'exam_shift',
   },
   {
-    title: <b>Tên phòng thi</b>,
-    dataIndex: 'room_name',
+    title: <b>Phòng thi</b>,
+    dataIndex: 'exam_room',
   },
   {
-    title: <b>Địa điểm</b>,
-    dataIndex: '',
+    title: <b>Số máy tối đa</b>,
+    dataIndex: 'exam_room',
   },
   {
-    title: <b>Số máy tính tối đa</b>,
-    dataIndex: '',
-  },
-  {
-    title: <b>Số máy đã đăng ký</b>,
-    dataIndex: '',
+    title: <b>Số máy trống</b>,
+    dataIndex: 'exam_room',
   },
 ];
 class FormExam extends React.Component {
@@ -171,84 +97,64 @@ class FormExam extends React.Component {
       <React.Fragment>
         <Form onSubmit={this.handleSubmit}>
           <Row gutter={24}>
-            {/* <Col span={8}>
-              <Item label="Tên kỳ thi">
-                {getFieldDecorator('name', {
-                  initialValue: editMode ? exam.name : '',
-                  rules: [
-                    {
-                      required: false,
-                      message: 'Nhập tên kỳ thi',
-                    },
-                  ],
-                })(<Input type="text" />)}
-              </Item>
-            </Col>
-            <Col span={4}>
-              <Item label="Số ca thi">
-                {getFieldDecorator('shift', {
-                  initialValue: editMode ? exam.shift : 1,
-                  rules: [
-                    {
-                      required: true,
-                      message: 'Nhập số ca thi',
-                    },
-                  ],
-                })(<InputNumber type="number" min={1} />)}
-              </Item>
-            </Col>
-            <Col span={8}>
-              <Item label="Giới hạn thời gian">
-                {getFieldDecorator('rangeTime', {
-                  initialValue: editMode ? exam.rangeTime : '',
-                  rules: [
-                    {
-                      required: false,
-                      message: 'Nhập khoảng thời gian diễn ra kỳ thi',
-                    },
-                  ],
-                })(<RangePicker />)}
-              </Item>
-            </Col>
-            <Col span={4}>
-              <Button type="primary" style={{ width: '100%', marginTop: '40px', float: 'right' }} onClick={this.handleSubmit}>OK</Button>
-            </Col> */}
-          </Row>
-          {/* <Divider /> */}
-          <Row gutter={24}>
             <Col>
-              <Tabs type="card">
-                <TabPane key="exam-room" tab="Danh sách phòng thi">
-                  <Table
-                    columns={columnsRoom()}
-                    dataSource={[]}
-                    bordered
-                    rowKey={r => r.exam_room_id}
-                    pagination={false}
-                    scroll={{ x: 'max-content', y: 500 }}
-                  />
+              <Tabs>
+                <TabPane key="exam-info" tab="Thông tin kì thi">
+                  <Tabs type="card">
+                    <TabPane key="exam-shift" tab="Danh sách ca thi">
+                      <EditTable
+                        data={exam.exam_shift}
+                        name="shift"
+                      />
+                      {/* <Table
+                        columns={columns(selectRoom)}
+                        dataSource={exam.exam_shift}
+                        bordered
+                        rowKey={r => r.index}
+                        pagination={false}
+                        scroll={{ x: 'max-content', y: 500 }}
+                        footer={() => (
+                          <Button type="primary">Cập nhật</Button>
+                        )}
+                      /> */}
+                    </TabPane>
+                    <TabPane key="exam-room" tab="Danh sách phòng thi">
+                      <EditTable
+                        data={exam.exam_room}
+                        name="room"
+                      />
+                      {/* <Table
+                        columns={columnsRoom()}
+                        dataSource={exam.exam_room}
+                        bordered
+                        rowKey={r => r.exam_room_id}
+                        pagination={false}
+                        scroll={{ x: 'max-content', y: 500 }}
+                      /> */}
+                    </TabPane>
+                    <TabPane key="exam-subject" tab="Danh sách môn thi">
+                      <EditTable
+                        data={listSubject}
+                        name="subject"
+                      />
+                      {/* <Table
+                        columns={columnsSubject(this.onOpenModal)}
+                        dataSource={exam.subject}
+                        bordered
+                        rowKey={r => r.subject_id}
+                        pagination={false}
+                        scroll={{ x: 'max-content', y: 500 }}
+                      /> */}
+                    </TabPane>
+                  </Tabs>
                 </TabPane>
-                <TabPane key="exam-subject" tab="Danh sách môn thi">
+                <TabPane key="exam-schedule" tab="Lịch thi">
                   <Table
-                    columns={columnsSubject(this.onOpenModal)}
-                    dataSource={listSubject}
-                    bordered
+                    dataSource={[]}
+                    columns={columnsSchedule()}
                     rowKey={r => r.subject_id}
                     pagination={false}
                     scroll={{ x: 'max-content', y: 500 }}
-                  />
-                </TabPane>
-                <TabPane key="exam-shift" tab="Danh sách ca thi">
-                  <Table
-                    columns={columns(selectRoom)}
-                    dataSource={[]}
-                    bordered
-                    rowKey={r => r.index}
-                    pagination={false}
-                    scroll={{ x: 'max-content', y: 500 }}
-                    footer={() => (
-                      <Button type="primary">Cập nhật</Button>
-                    )}
                   />
                 </TabPane>
               </Tabs>
