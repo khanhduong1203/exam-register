@@ -104,7 +104,6 @@ export const API_URLS = {
       headers: HEADERS.header(),
     }),
   },
-
   EXAM_SHIFT: {
     getExamShifts: () => ({
       endPoint: '/api/exam_shift',
@@ -119,12 +118,12 @@ export const API_URLS = {
     createExamShift: () => ({
       endPoint: '/api/exam_shift/create',
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     updateExamShift: id => ({
       endPoint: `/api/exam_shift/${id}`,
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     deleteExamShift: id => ({
       endPoint: `/api/exam_shift/delete/${id}`,
@@ -146,12 +145,12 @@ export const API_URLS = {
     createExamRoom: () => ({
       endPoint: '/api/exam_room/create',
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     updateExamRoom: id => ({
       endPoint: `/api/exam_room/${id}`,
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     deleteExamRoom: id => ({
       endPoint: `/api/exam_room/delete/${id}`,

@@ -333,7 +333,7 @@ class EditTable extends React.Component {
         ...col,
         onCell: record => ({
           record,
-          inputType: col.dataIndex === 'name' ? 'text' : 'number',
+          inputType: col.dataIndex === 'text',
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),

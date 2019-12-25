@@ -14,11 +14,19 @@ const { TabPane } = Tabs;
 const columns = [
   {
     title: 'MSV',
-    dataIndex: 'msv',
+    dataIndex: 'student_code',
   },
   {
     title: 'TÊN',
     dataIndex: 'name',
+  },
+  {
+    title: 'NGÀY SINH',
+    dataIndex: 'date_birth',
+  },
+  {
+    title: 'GIỚI TÍNH',
+    dataIndex: 'gender',
   },
   {
     title: 'LỚP',
@@ -26,11 +34,11 @@ const columns = [
   },
   {
     title: 'SĐT',
-    dataIndex: 'phone',
+    dataIndex: 'phone_number',
   },
   {
     title: 'MAIL',
-    dataIndex: 'mail',
+    dataIndex: 'email',
   },
 ];
 
@@ -50,7 +58,7 @@ class ImportModal extends React.Component {
 
 
   isItemError = (item) => {
-    if ((item.msv === undefined || item.class === undefined)) {
+    if ((item.student_code === undefined || item.class === undefined)) {
       return true;
     }
     return false;
@@ -60,7 +68,7 @@ class ImportModal extends React.Component {
     let result = false;
     // const { students } = this.props;
     // for (let i = 0; i < students.length; i++) {
-    //   if (item.msv === students[i].msv && item.class === students.class) {
+    //   if (item.student_code === students[i].student_code && item.class === students.class) {
     //     result = true;
     //     break;
     //   }
@@ -79,7 +87,7 @@ class ImportModal extends React.Component {
         /** convert sheet to json */
         let startAt = 0;
         const { result } = event.target;
-        const workbook = XLSX.read(result, { type: 'binary' });
+        const workbook = XLSX.read(result, { type: 'string', locale: 'vi-VN', dateNF: 'dd/mm/yyyy' });
         const Sheet = workbook.Sheets[workbook.SheetNames[0]];
         let data = XLSX.utils.sheet_to_json(Sheet);
         for (let i = 1; i <= data.length; i++) {
@@ -96,23 +104,30 @@ class ImportModal extends React.Component {
           this.setState({ isFetching: false, name: '' });
         } else {
           this.setState({ isFetching: true });
-          data = XLSX.utils.sheet_to_json(Sheet, { range: startAt, header: ['msv', 'name', 'class', 'phone', 'mail'] });
+          data = XLSX.utils.sheet_to_json(Sheet, { range: startAt, header: ['student_code', 'name', 'date_birth', 'gender', 'class', 'phone_number', 'email'] });
+          console.log(data);
           /** format empty cell */
           data.forEach((item, index) => {
-            if (item.msv !== undefined) {
-              item.msv = (item.msv.toString().trim() === '') ? undefined : item.msv.toString().trim();
+            if (item.student_code !== undefined) {
+              item.student_code = (item.student_code.toString().trim() === '') ? undefined : item.student_code.toString().trim();
             }
             if (item.name !== undefined) {
               item.name = (item.name.toString().trim() === '') ? undefined : item.name.toString().trim();
             }
+            if (item.date_birth !== undefined) {
+              item.date_birth = (item.date_birth.toString().trim() === '') ? undefined : item.date_birth.toString().trim();
+            }
+            if (item.gender !== undefined) {
+              item.gender = (item.gender.toString().trim() === '') ? undefined : item.gender.toString().trim();
+            }
             if (item.class !== undefined) {
               item.class = (item.class.toString().trim() === '') ? undefined : item.class.toString().trim();
             }
-            if (item.phone !== undefined) {
-              item.phone = (item.phone.toString().trim() === '') ? undefined : item.phone.toString().trim();
+            if (item.phone_number !== undefined) {
+              item.phone_number = (item.phone_number.toString().trim() === '') ? undefined : item.phone_number.toString().trim();
             }
-            if (item.mail !== undefined) {
-              item.mail = (item.mail.toString().trim() === '') ? undefined : item.mail.toString().trim();
+            if (item.email !== undefined) {
+              item.email = (item.email.toString().trim() === '') ? undefined : item.email.toString().trim();
             }
           });
           /** read each row */

@@ -77,3 +77,53 @@ export const getExam = (id, meta) => async (dispatch) => {
     }
   }
 };
+
+/** EXAM_SHIFT */
+export const createExamShift = (payload, meta) => async (dispatch) => {
+  dispatch({ type: TYPE.INSERTING_EXAM_SHIFT });
+  const api = API_URLS.EXAM_SHIFT.createExamShift();
+  const { response, error } = await apiCall({ ...api, payload });
+  if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.INSERT_EXAM_SHIFT_SUCCESS,
+      payload,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_SUCCESS] },
+    });
+    if (meta && meta.onSuccess) {
+      meta.onSuccess();
+    }
+  } else {
+    dispatch({
+      type: TYPE.INSERT_EXAM_SHIFT_FAILURE,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_FAILURE] },
+    });
+    if (meta && meta.onError) {
+      meta.onError();
+    }
+  }
+};
+
+/** EXAM_ROOM */
+export const createExamRoom = (payload, meta) => async (dispatch) => {
+  dispatch({ type: TYPE.INSERTING_EXAM_ROOM });
+  const api = API_URLS.EXAM_ROOM.createExamRoom();
+  const { response, error } = await apiCall({ ...api, payload });
+  if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.INSERT_EXAM_ROOM_SUCCESS,
+      payload,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_SUCCESS] },
+    });
+    if (meta && meta.onSuccess) {
+      meta.onSuccess();
+    }
+  } else {
+    dispatch({
+      type: TYPE.INSERT_EXAM_ROOM_FAILURE,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_FAILURE] },
+    });
+    if (meta && meta.onError) {
+      meta.onError();
+    }
+  }
+};

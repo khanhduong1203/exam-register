@@ -1,32 +1,16 @@
-EXAM_SHIFT: {
-  getExamSchedules: () => ({
-    endPoint: '/api/exam_schedule',
-    method: 'GET',
-    headers: HEADERS.header(),
-  }),
-  getExamSchedule: id => ({
-    endPoint: `/api/exam_schedule/${id}`,
-    method: 'GET',
-    headers: HEADERS.header(),
-  }),
-  getExamScheduleByExamId: id => ({
-    endPoint: `/api/exam_schedule/exam_id/${id}`,
-    method: 'GET',
-    headers: HEADERS.header(),
-  }),
-  createExamSchedule: () => ({
-    endPoint: '/api/exam_schedule/create',
-    method: 'POST',
-    headers: HEADERS.header(),
-  }),
-  updateExamSchedule: id => ({
-    endPoint: `/api/exam_schedule/${id}`,
-    method: 'POST',
-    headers: HEADERS.header(),
-  }),
-  deleteExamSchedule: id => ({
-    endPoint: `/api/exam_schedule/delete/${id}`,
-    method: 'POST',
-    headers: HEADERS.header(),
-  }),
-},
+// Exam_Shift
+GETTING_EXAM_ROOMS: 'GETTING_EXAM_ROOMS',
+GET_EXAM_ROOMS_SUCCESS: 'GET_EXAM_ROOMS_SUCCESS',
+GET_EXAM_ROOMS_FAILURE: 'GET_EXAM_ROOMS_FAILURE',
+
+INSERTING_EXAM_ROOM: 'INSERTING_EXAM_ROOM',
+INSERT_EXAM_ROOM_SUCCESS: 'INSERT_EXAM_ROOM_SUCCESS',
+INSERT_EXAM_ROOM_FAILURE: 'INSERT_EXAM_ROOM_FAILURE',
+
+UPDATING_EXAM_ROOM: 'UPDATING_EXAM_ROOM',
+UPDATE_EXAM_ROOM_SUCCESS: 'UPDATE_EXAM_ROOM_SUCCESS',
+UPDATE_EXAM_ROOM_FAILURE: 'UPDATE_EXAM_ROOM_FAILURE',
+
+DELETING_EXAM_ROOM: 'DELETING_EXAM_ROOM',
+DELETE_EXAM_ROOM_SUCCESS: 'DELETE_EXAM_ROOM_SUCCESS',
+DELETE_EXAM_ROOM_FAILURE: 'DELETE_EXAM_ROOM_FAILURE',

@@ -7,6 +7,8 @@ import ToJS from '../../../hoc/ToJS';
 import { ROOM, SUBJECT } from '../../../constant/enum';
 import ImportModal from './ImportModal';
 import EditTable from './EditTable';
+import FormShift from './formShift';
+import FormRoom from './formRoom';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -25,6 +27,27 @@ function getNumberComputer(arr) {
   }
   return num;
 }
+
+const columnsSubject = (filteredInfo, sortedInfo, openModal) => [
+  {
+    title: <b>Tên môn thi</b>,
+    dataIndex: 'subject_name',
+    key: 'subject_name',
+    width: 150,
+    // sorter: (a, b) => a.subject_name.localeCompare(b.subject_name),
+    // ...this.getColumnSearchProps('subject_name'),
+    // sortOrder: sortedInfo.columnKey === 'subject_name' && sortedInfo.order,
+    // editable: true,
+  },
+  {
+    title: <b>Mã môn thi</b>,
+    dataIndex: 'subject_code',
+  },
+  {
+    title: <b>Danh sách sinh viên</b>,
+    render: (value, record) => <Button onClick={() => openModal(record)}>Chọn file</Button>,
+  },
+];
 
 const columnsSchedule = () => [
   {
@@ -102,49 +125,32 @@ class FormExam extends React.Component {
                 <TabPane key="exam-info" tab="Thông tin kì thi">
                   <Tabs type="card">
                     <TabPane key="exam-shift" tab="Danh sách ca thi">
+                      <FormShift exam={exam} />
                       <EditTable
                         data={exam.exam_shift}
                         name="shift"
                       />
-                      {/* <Table
-                        columns={columns(selectRoom)}
-                        dataSource={exam.exam_shift}
-                        bordered
-                        rowKey={r => r.index}
-                        pagination={false}
-                        scroll={{ x: 'max-content', y: 500 }}
-                        footer={() => (
-                          <Button type="primary">Cập nhật</Button>
-                        )}
-                      /> */}
                     </TabPane>
                     <TabPane key="exam-room" tab="Danh sách phòng thi">
+                      <FormRoom exam={exam} />
                       <EditTable
                         data={exam.exam_room}
                         name="room"
                       />
-                      {/* <Table
-                        columns={columnsRoom()}
-                        dataSource={exam.exam_room}
-                        bordered
-                        rowKey={r => r.exam_room_id}
-                        pagination={false}
-                        scroll={{ x: 'max-content', y: 500 }}
-                      /> */}
                     </TabPane>
                     <TabPane key="exam-subject" tab="Danh sách môn thi">
-                      <EditTable
+                      {/* <EditTable
                         data={listSubject}
                         name="subject"
-                      />
-                      {/* <Table
-                        columns={columnsSubject(this.onOpenModal)}
-                        dataSource={exam.subject}
+                      /> */}
+                      <Table
+                        columns={columnsSubject('', '', this.onOpenModal)}
+                        dataSource={listSubject}
                         bordered
                         rowKey={r => r.subject_id}
                         pagination={false}
                         scroll={{ x: 'max-content', y: 500 }}
-                      /> */}
+                      />
                     </TabPane>
                   </Tabs>
                 </TabPane>
