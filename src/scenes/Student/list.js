@@ -5,7 +5,7 @@ import WithAuthentication from '../../hoc/WithAuthentication';
 import List from './components/List';
 import select from '../../utils/select';
 import {
-  getStudentsIfNeed, getStudents,
+  getStudentsIfNeed, getStudents, insertStudent,
 } from './actions';
 import toJS from '../../hoc/ToJS/index';
 
@@ -49,6 +49,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getStudentsIfNeed: params => dispatch(getStudentsIfNeed(params)),
   getStudents: params => dispatch(getStudents(params)),
+  insertStudents: params => dispatch(insertStudent(params)),
 });
 
 export default (connect(

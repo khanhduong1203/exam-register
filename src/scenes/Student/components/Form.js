@@ -35,7 +35,7 @@ class StudentForm extends Component {
             { ...values, date_birth: values.date_birth.format('DD-MM-YYYY') },
           );
         } else {
-          this.props.onSubmit({ ...values, date_birth: values.date_birth.format('DD-MM-YYYY') });
+          this.props.onSubmit([{ ...values, date_birth: values.date_birth.format('DD-MM-YYYY') }]);
         }
       }
     });
@@ -137,6 +137,7 @@ class StudentForm extends Component {
               type="danger"
               onClick={() => this.onDelete(student)}
             >
+
               Xoá
             </Button>
           ) : null}

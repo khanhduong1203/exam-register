@@ -57,9 +57,11 @@ class StudentList extends React.Component {
           size="small"
           style={{ width: 110, marginRight: 8 }}
         >
+
           Search
         </Button>
         <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 110 }}>
+
           Reset
         </Button>
       </div>

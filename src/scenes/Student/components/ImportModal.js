@@ -5,8 +5,11 @@ import {
   Modal, Row, Button, Col, notification, Alert, Table, Divider, Tabs, Upload, Icon,
 } from 'antd';
 import * as XLSX from 'xlsx';
+import { connect } from 'react-redux';
 import { json2excel } from 'js2excel';
+import select from '../../../utils/select';
 import ToJS from '../../../hoc/ToJS';
+import { insertStudent } from '../actions';
 
 const { TabPane } = Tabs;
 // import { connect } from 'react-redux';
@@ -87,7 +90,7 @@ class ImportModal extends React.Component {
         /** convert sheet to json */
         let startAt = 0;
         const { result } = event.target;
-        const workbook = XLSX.read(result, { type: 'string', locale: 'vi-VN', dateNF: 'dd/mm/yyyy' });
+        const workbook = XLSX.read(result, { type: 'binary', dateNF: 'mm-dd-yyyy' });
         const Sheet = workbook.Sheets[workbook.SheetNames[0]];
         let data = XLSX.utils.sheet_to_json(Sheet);
         for (let i = 1; i <= data.length; i++) {
@@ -165,6 +168,10 @@ class ImportModal extends React.Component {
     }
   }
 
+  submit = () => {
+    this.props.insertStudents(this.state.data);
+  }
+
   render() {
     const { visible, closeModal } = this.props;
     const {
@@ -193,7 +200,7 @@ class ImportModal extends React.Component {
     return (
       <Modal
         visible={visible}
-        onOk={closeModal}
+        onOk={this.submit}
         onCancel={closeModal}
         width={1000}
       >
@@ -202,6 +209,7 @@ class ImportModal extends React.Component {
             <Upload {...props} onChange={this.onImportExcel}>
               <Button>
                 <Icon type="upload" />
+
                 Chọn file
               </Button>
             </Upload>
@@ -239,5 +247,13 @@ class ImportModal extends React.Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  list: select(state, 'studentReducer', 'list'),
+  isFetching: select(state, 'studentReducer', 'isFetching'),
+  didInvalidate: select(state, 'studentReducer', 'didInvalidate'),
+});
 
-export default ToJS(ImportModal);
+const mapDispatchToProps = dispatch => ({
+  insertStudents: params => dispatch(insertStudent(params)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(ToJS(ImportModal));
