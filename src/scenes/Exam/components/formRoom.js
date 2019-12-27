@@ -15,13 +15,12 @@ class FormRoom extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const payload = [{
+        const payload = {
           exam_id: this.props.exam.exam[0].exam_id,
           room_place: values.room_place,
           room_name: values.room_name,
           computer_max_amount: values.computer_max_amount,
-        }];
-        console.log(payload);
+        };
         this.props.createNewRoom(payload);
       }
     });

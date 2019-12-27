@@ -32,7 +32,7 @@ class RoomForm extends Component {
             values,
           );
         } else {
-          this.props.onSubmit(values);
+          this.props.onSubmit({ ...values, exam_id: '' });
         }
       }
     });

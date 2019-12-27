@@ -188,11 +188,6 @@ class EditTable extends React.Component {
         editable: true,
       },
       {
-        title: <b>Số máy đã đăng ký</b>,
-        dataIndex: '',
-        // editable: true,
-      },
-      {
         title: <b>Tùy chọn</b>,
         width: 150,
         align: 'center',
