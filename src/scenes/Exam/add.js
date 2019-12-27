@@ -60,16 +60,19 @@ class DepartmentPage extends React.Component {
 
   render() {
     const { exam } = this.state;
+    const { detail } = this.props;
     return (
       <React.Fragment>
         <Row>
           <Col>
-            <FormExam
-              onSubmit={this.createExam}
-              selectRoom={this.selectRoom}
-              exam={exam}
-              listSubject={this.props.listSubject}
-            />
+            {detail.exam !== undefined ? (
+              <FormExam
+                onSubmit={this.createExam}
+                selectRoom={this.selectRoom}
+                exam={exam}
+                listSubject={this.props.listSubject}
+              />
+            ) : <h2>Chưa chọn kì thi</h2>}
           </Col>
         </Row>
       </React.Fragment>
@@ -78,6 +81,7 @@ class DepartmentPage extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  detail: select(state, 'examReducer', 'detail'),
   list: select(state, 'examReducer', 'list'),
   listSubject: select(state, 'subjectReducer', 'list'),
   isFetching: select(state, 'studentReducer', 'isFetching'),

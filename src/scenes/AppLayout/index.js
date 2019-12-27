@@ -19,7 +19,7 @@ import ChangePasswordPage from '../Auth/ChangePasswordPage';
 import { pushNotification, popNotification } from './action';
 import StudentInfo from '../SV_Info';
 import ExamRegistration from '../SV_Exam';
-import { logOut } from '../Auth/action';
+import { logOut, changePassword } from '../Auth/action';
 
 const { Content, Header } = Layout;
 
@@ -40,24 +40,13 @@ class AppLayout extends Component {
       <Layout
         style={{ minHeight: '100vh' }}
       >
-        <SiderMenu history={history} logOut={logOut} role={role} />
+        <SiderMenu
+          history={history}
+          logOut={logOut}
+          role={role}
+          user={role}
+        />
         <Content>
-          <Header
-            style={{
-              background: '#082A95',
-              padding: '0 25px',
-              color: 'white',
-            }}
-          >
-            <div
-              style={{
-                float: 'right',
-                color: 'white',
-              }}
-            >
-              <UserWidget user={user} onChangePassword={this.handleChangePassword} />
-            </div>
-          </Header>
           <Content style={{ margin: '16px' }}>
             <div style={{ padding: 24, background: '#fff', minHeight: 550 }}>
               {role === 'admin' && (
@@ -83,7 +72,8 @@ class AppLayout extends Component {
 
 const mapStateToProps = state => ({
   notifications: select(state, ['appReducer'], 'notifications'),
-  user: select(state, 'authReducer', 'authUser'),
+  user: select(state, 'authReducer'),
+  // user: select(state, 'authReducer', 'authUser'),
   userId: select(state, 'authReducer', 'ID'),
   userTypeId: select(state, 'authReducer', 'UserTypeID'),
   role: select(state, 'authReducer', 'role'),
@@ -95,6 +85,7 @@ const mapDispatchToProps = dispatch => ({
   popNotification: payload => dispatch(popNotification(payload)),
   pushNotification: payload => dispatch(pushNotification(payload)),
   logOut: () => dispatch(logOut()),
+  changePassword: (payload, meta) => dispatch(changePassword(payload, meta)),
 });
 
 export default WithAuthentication(true)(

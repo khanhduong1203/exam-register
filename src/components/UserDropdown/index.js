@@ -3,6 +3,7 @@ import { Menu, Dropdown } from 'antd';
 
 const UserDropdown = ({ onClick, children }) => (
   <Dropdown
+    // placement="topLeft"
     overlay={(
       <Menu onClick={event => onClick(event)}>
         <Menu.Item key="change-pass">

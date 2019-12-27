@@ -1,12 +1,16 @@
+/* eslint-disable no-console */
 /* eslint-disable prefer-const */
 import React from 'react';
 import {
-  Row, Col, Form, Input, DatePicker, Button, TimePicker, InputNumber, Table, Divider, Select, Tabs, List, Icon,
+  Row, Col, Form, Input, DatePicker, Button, TimePicker, InputNumber, Table, Divider, Select, Tabs, List, Icon, Popconfirm,
 } from 'antd';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import ToJS from '../../../hoc/ToJS';
 import { ROOM, SUBJECT } from '../../../constant/enum';
 import ImportModal from './ImportModal';
+import select from '../../../utils/select';
+import { updateExamShift, updateExamRoom } from '../action';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -17,6 +21,9 @@ class EditableCell extends React.Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
       return <InputNumber min={0} />;
+    }
+    if (this.props.inputType === 'time') {
+      return <TimePicker format="HH:mm" showTime />;
     }
     return <Input />;
   };
@@ -43,7 +50,7 @@ class EditableCell extends React.Component {
                   message: `Please Input ${title}!`,
                 },
               ],
-              initialValue: record[dataIndex],
+              initialValue: this.props.inputType === 'time' ? moment(record[dataIndex], 'HH:mm') : record[dataIndex],
             })(this.getInput())}
           </Form.Item>
         ) : (
@@ -71,60 +78,73 @@ class EditTable extends React.Component {
     this.columnsShift = (filteredInfo, sortedInfo, selectRoom) => [
       {
         title: <b>STT</b>,
+        key: 'stt',
         width: 100,
-        fixed: 'left',
         render: (value, record, index) => index + 1,
       },
       {
         title: <b>Tên ca thi</b>,
-        dataIndex: 'index',
+        dataIndex: 'exam_shift_name',
+        key: 'exam_shift_name',
         width: 100,
-        fixed: 'left',
-        render: value => `Ca ${value}`,
+        editable: true,
       },
-      // {
-      //   title: <b>Phòng thi</b>,
-      //   dataIndex: 'room',
-      //   width: 150,
-      //   render: (value, record) => (
-      //     <Select
-      //       mode="multiple"
-      //       maxTagCount={0}
-      //       defaultValue={value}
-      //       filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-      //       onChange={val => selectRoom(val, record.index)}
-      //     >
-      //       {ROOM.map(e => (<Option value={e.id}>{e.name}</Option>))}
-      //     </Select>
-      //   ),
-      // },
       {
         title: <b>Giờ băt đầu</b>,
-        dataIndex: 'start',
+        dataIndex: 'start_time',
+        key: 'start',
         width: 150,
-        render: value => <TimePicker defaultValue={moment(value, 'HH:mm')} format="HH:mm" />,
+        editable: true,
+        // render: (value, record) => (!this.isEditing(record) ? moment(record.start_time).format('DD-MM-YYYY HH:mm:ss') : <DatePicker defaultValue={moment(record.start_time)} format="DD-MM-YYYY HH:mm:ss" showTime />),
       },
       {
         title: <b>Giờ kết thúc</b>,
-        dataIndex: 'end',
+        dataIndex: 'end_time',
+        key: 'end',
         width: 150,
-        render: value => <TimePicker defaultValue={moment(value, 'HH:mm')} format="HH:mm" />,
+        editable: true,
+        // render: (value, record) => (!this.isEditing(record) ? moment(record.end_time).format('DD-MM-YYYY HH:mm:ss') : <DatePicker defaultValue={moment(record.end_time)} format="DD-MM-YYYY HH:mm:ss" showTime />),
       },
-      // {
-      //   title: <b>Môn thi</b>,
-      //   dataIndex: 'subject',
-      //   width: 150,
-      //   render: value => (
-      //     <Select
-      //       mode="multiple"
-      //       defaultValue={value}
-      //       maxTagCount={0}
-      //       filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-      //     >
-      //       {SUBJECT.map(e => (<Option value={e.id}>{e.name}</Option>))}
-      //     </Select>
-      //   ),
-      // },
+      {
+        title: <b>Sửa</b>,
+        align: 'center',
+        dataIndex: 'operation',
+        render: (text, record) => {
+          const { editingKey } = this.state;
+          const editable = this.isEditing(record);
+          return editable ? (
+            <span>
+              <EditableContext.Consumer>
+                {form => (
+                  <a
+                    onClick={() => this.save(form, record)}
+                    style={{ marginRight: 8 }}
+                  >
+                    Lưu
+                  </a>
+                )}
+              </EditableContext.Consumer>
+              <a onClick={() => this.cancel(record.key)} style={{ color: 'red' }}>Hủy</a>
+            </span>
+          ) : (
+            <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)}>
+              Sửa
+            </a>
+          );
+        },
+      },
+      {
+        title: <b>Xóa</b>,
+        align: 'center',
+        dataIndex: 'exam_shift_id',
+        render: value => (
+          <Popconfirm title="Bạn chắc chắn muốn xóa ca thi này?" onConfirm={() => this.delete(value)}>
+            <a style={{ color: 'red' }}>
+              Xóa
+            </a>
+          </Popconfirm>
+        ),
+      },
     ];
 
     this.columnsSubject = (filteredInfo, sortedInfo, openModal) => [
@@ -145,6 +165,32 @@ class EditTable extends React.Component {
       {
         title: <b>Danh sách sinh viên</b>,
         render: (value, record) => <Button onClick={() => openModal(record)}>Chọn file</Button>,
+      },
+    ];
+
+    this.columnsRoom = (filteredInfo, sortedInfo) => [
+      {
+        title: <b>Tên phòng thi</b>,
+        dataIndex: 'room_name',
+        key: 'room_name',
+        editable: true,
+      },
+      {
+        title: <b>Địa điểm</b>,
+        dataIndex: 'room_place',
+        key: 'room_place',
+        editable: true,
+      },
+      {
+        title: <b>Số máy tính tối đa</b>,
+        dataIndex: 'computer_max_amount',
+        key: 'computer_max_amount',
+        editable: true,
+      },
+      {
+        title: <b>Số máy đã đăng ký</b>,
+        dataIndex: '',
+        // editable: true,
       },
       {
         title: <b>Tùy chọn</b>,
@@ -175,28 +221,17 @@ class EditTable extends React.Component {
           );
         },
       },
-    ];
-
-    this.columnsRoom = (filteredInfo, sortedInfo) => [
       {
-        title: <b>Mã phòng thi</b>,
+        title: <b>Xóa</b>,
+        align: 'center',
         dataIndex: 'exam_room_id',
-      },
-      {
-        title: <b>Tên phòng thi</b>,
-        dataIndex: 'room_name',
-      },
-      {
-        title: <b>Địa điểm</b>,
-        dataIndex: '',
-      },
-      {
-        title: <b>Số máy tính tối đa</b>,
-        dataIndex: '',
-      },
-      {
-        title: <b>Số máy đã đăng ký</b>,
-        dataIndex: '',
+        render: value => (
+          <Popconfirm title="Bạn chắc chắn muốn xóa ca thi này?" onConfirm={() => this.delete(value)}>
+            <a style={{ color: 'red' }}>
+              Xóa
+            </a>
+          </Popconfirm>
+        ),
       },
     ];
   }
@@ -284,23 +319,27 @@ class EditTable extends React.Component {
   };
 
   save = (form, record) => {
-    const key = record.key;
+    // const key = record.key;
+    const exam_id = this.props.exam.exam[0].exam_id;
     form.validateFields((error, row) => {
-      // if (error) {
-      //   return;
-      // } else {
-      //   return;
-      // }
+      if (error) {
+        console.log('x');
+      } else {
+        this.props.saveRow(
+          record.key,
+          { ...record, ...row, exam_id },
+        );
+      }
     });
+    this.setState({ editingKey: '' });
   };
 
   edit(key) {
-    console.log(this);
     this.setState({ editingKey: key });
   }
 
   delete(id) {
-    this.props.deleteRoom(id);
+    this.props.deleteRow(id);
   }
 
 
@@ -322,8 +361,6 @@ class EditTable extends React.Component {
       cols = this.columnsShift(filteredInfo, sortedInfo);
     } else if (name === 'room') {
       cols = this.columnsRoom(filteredInfo, sortedInfo);
-    } else if (name === 'subject') {
-      cols = this.columnsSubject(filteredInfo, sortedInfo);
     }
     const Xcolumns = cols.map((col) => {
       if (!col.editable) {
@@ -333,22 +370,26 @@ class EditTable extends React.Component {
         ...col,
         onCell: record => ({
           record,
-          inputType: col.dataIndex === 'text',
+          inputType: name === 'shift' ? (col.dataIndex === 'exam_shift_name' ? 'text' : 'time') : (col.dataIndex === 'computer_max_amount' ? 'number' : 'text'),
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),
         }),
       };
     });
-    console.log(name, Xcolumns);
+    let dataTable = [];
+    dataTable = data !== undefined && data.map(item => ({
+      ...item,
+      key: name === 'shift' ? item.exam_shift_id : item.exam_room_id,
+    }));
     return (
       <EditableContext.Provider value={this.props.form}>
         <Table
           components={components}
           columns={Xcolumns}
-          dataSource={data}
+          dataSource={dataTable}
           bordered
-          rowKey={r => r.index}
+          rowKey={r => r.key}
           pagination={false}
           scroll={{ x: 'max-content', y: 500 }}
           footer={() => (
@@ -359,5 +400,13 @@ class EditTable extends React.Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  exam: select(state, 'examReducer', 'detail'),
+});
 
-export default (Form.create()(ToJS(EditTable)));
+const mapDispatchToProps = dispatch => ({
+  saveExamShift: (id, payload, meta) => dispatch(updateExamShift(id, payload, meta)),
+  saveExamRoom: (id, payload, meta) => dispatch(updateExamRoom(id, payload, meta)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form.create()(ToJS(EditTable)));

@@ -1,16 +1,17 @@
 import React from 'react';
 
 import {
-  Layout, Avatar, Menu, Icon, Button,
+  Layout, Avatar, Menu, Icon, Badge, Modal, Row, Col,
 } from 'antd';
 import { Link } from 'react-router-dom';
 import ROUTER from '../../../constant/router';
 import logo from '../../../images/uet.jpg';
+import UserDropdown from '../../UserDropdown';
 
 const {
   Sider,
 } = Layout;
-
+const { confirm } = Modal;
 class SiderMenu extends React.Component {
   state = { collapsed: false }
 
@@ -18,8 +19,25 @@ class SiderMenu extends React.Component {
     this.setState({ collapsed });
   };
 
+  showConfirm(logOut) {
+    confirm({
+      title: 'Bạn muốn đăng xuất?',
+      content: 'Hãy chắc chắn điều này',
+      onOk() {
+        logOut();
+      },
+    });
+  }
+
+  handleChangePassword = () => {
+    const { history } = this.props;
+    history.push(ROUTER.AUTH.CHANGE_PASSWORD);
+  };
+
   render() {
-    const { history, logOut, role } = this.props;
+    const {
+      history, logOut, role, user,
+    } = this.props;
     const { collapsed } = this.state;
     const pathname = history.location.pathname.split('/')[1];
     const key = pathname.length > 0 ? pathname : 'home';
@@ -30,16 +48,33 @@ class SiderMenu extends React.Component {
         onCollapse={this.onCollapse}
         style={{ flex: 1, backgroundColor: 'white' }}
       >
-        <Avatar
-          src={logo}
-          size="large"
-          style={!collapsed ? {
-            margin: 45, verticalAlign: 'middle', width: 100, height: 100,
-          } : {
-            margin: 18, verticalAlign: 'middle', width: 40, height: 40,
-          }}
-          shape="square"
-        />
+        <Row gutter={24}>
+          <Col span={4} />
+          <Col span={16}>
+            <Badge style={{ margin: '15px' }}>
+              <Avatar
+                src={logo}
+                size="default"
+                style={!collapsed ? {
+                  verticalAlign: 'middle', width: 100, height: 100, margin: '15px',
+                } : {
+                  verticalAlign: 'middle', width: 40, height: 40,
+                }}
+                shape="square"
+              />
+            </Badge>
+          </Col>
+        </Row>
+        {!collapsed && (
+          <Row gutter={24}>
+            <Col span={4} />
+            <Col span={16} style={{ textAlign: 'center' }}>
+              <UserDropdown onClick={this.handleChangePassword}>
+                <h2>{user}</h2>
+              </UserDropdown>
+            </Col>
+          </Row>
+        )}
         {role === 'admin' ? (
           <Menu theme="light" defaultSelectedKeys={[key]} mode="inline">
             <Menu.Item key="home">
@@ -66,6 +101,12 @@ class SiderMenu extends React.Component {
                 <span>Kỳ thi</span>
               </Link>
             </Menu.Item>
+            <Menu.Item key="log-out">
+              <a onClick={() => this.showConfirm(logOut)}>
+                <Icon type="logout" />
+                <span>Đăng xuất</span>
+              </a>
+            </Menu.Item>
           </Menu>
         ) : (
           <Menu theme="light" defaultSelectedKeys={[key]} mode="inline">
@@ -87,12 +128,12 @@ class SiderMenu extends React.Component {
                 <span>Đăng ký thi</span>
               </Link>
             </Menu.Item>
-            {/* <Menu.Item key="log-out">
-            <Button type="danger" onClick={() => logOut()}>
-              <Icon type="logout" />
-              <span>Đăng xuất</span>
-            </Button>
-          </Menu.Item> */}
+            <Menu.Item key="log-out">
+              <a onClick={() => this.showConfirm(logOut)}>
+                <Icon type="logout" />
+                <span>Đăng xuất</span>
+              </a>
+            </Menu.Item>
           </Menu>
         )}
       </Sider>

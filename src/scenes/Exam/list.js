@@ -71,10 +71,12 @@ class ListExamPage extends React.Component {
         <Divider dashed />
         <Row>
           <Col>
-            <FormExam
-              exam={exam}
-              listSubject={listSubject}
-            />
+            {(exam.exam !== undefined || list.length === 0) ? (
+              <FormExam
+                exam={exam}
+                listSubject={listSubject}
+              />
+            ) : <h2>Chưa chọn kì thi</h2>}
           </Col>
         </Row>
         <Modal

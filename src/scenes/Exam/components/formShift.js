@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Form, Row, Col, Input, DatePicker, Button,
+  Form, Row, Col, Input, TimePicker, Button, notification,
 } from 'antd';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -9,7 +9,6 @@ import select from '../../../utils/select';
 import { createExamShift } from '../action';
 
 const { Item } = Form;
-
 class FormShift extends React.Component {
   submit = (e) => {
     e.preventDefault();
@@ -18,11 +17,22 @@ class FormShift extends React.Component {
         const payload = {
           exam_id: this.props.exam.exam[0].exam_id,
           exam_shift_name: values.exam_shift_name,
-          start_time: moment(values.start_time).format('YYYY-MM-DD HH:mm:ss'),
-          end_time: moment(values.end_time).format('YYYY-MM-DD HH:mm:ss'),
+          start_time: moment(values.start_time).format('HH:mm'),
+          end_time: moment(values.end_time).format('HH:mm'),
         };
         console.log(payload);
-        this.props.createNewShift(payload);
+        this.props.createNewShift(
+          payload,
+          {
+            onSuccess: () => {
+              notification.success({ message: 'Thêm ca thi thành công' });
+              this.props.form.resetFields();
+            },
+            onError: () => {
+              notification.error({ message: 'Thêm ca thi thất bại' });
+            },
+          },
+        );
       }
     });
   }
@@ -53,7 +63,7 @@ class FormShift extends React.Component {
                     message: 'Nhập giờ bắt đầu',
                   },
                 ],
-              })(<DatePicker format="DD-MM-YYYY HH:mm:ss" showTime />)}
+              })(<TimePicker format="HH:mm" />)}
             </Item>
           </Col>
           <Col span={6}>
@@ -65,7 +75,7 @@ class FormShift extends React.Component {
                     message: 'Nhập giờ kết thúc',
                   },
                 ],
-              })(<DatePicker format="DD-MM-YYYY HH:mm:ss" showTime />)}
+              })(<TimePicker format="HH:mm" />)}
             </Item>
           </Col>
           <Col span={6}>
