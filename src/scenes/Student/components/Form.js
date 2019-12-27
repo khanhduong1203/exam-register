@@ -15,13 +15,13 @@ const RadioGroup = Radio.Group;
 class StudentForm extends Component {
   onDelete = (student) => {
     Modal.confirm({
-      okText: 'Xoá nhân viên',
+      okText: 'Xoá sinh viên',
       okButtonProps: { type: 'danger' },
       cancelText: 'Huỷ',
       cancelButtonProps: { type: 'primary' },
-      title: `Bạn chắc chắn xoá nhân viên ${student.name}`,
+      title: `Bạn chắc chắn xoá sinh viên ${student.name}`,
       content: 'Tài khoản và mọi thông tin liên quan sẽ bị xoá khỏi hệ thống !',
-      onOk: () => this.props.onDelete(student),
+      onOk: () => this.props.onDelete(student.student_code),
     });
   };
 
@@ -152,14 +152,12 @@ class StudentForm extends Component {
 
 StudentForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
-  onDelete: PropTypes.func,
   editMode: PropTypes.bool,
   student: PropTypes.object,
   form: PropTypes.object.isRequired,
 };
 
 StudentForm.defaultProps = {
-  onDelete: () => { },
   editMode: false,
   student: {},
 };

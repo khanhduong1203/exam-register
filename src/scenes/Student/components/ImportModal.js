@@ -169,7 +169,19 @@ class ImportModal extends React.Component {
   }
 
   submit = () => {
-    this.props.insertStudents(this.state.data);
+    this.props.insertStudents(
+      this.state.data,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Thêm sinh viên thành công' });
+          this.props.closeModal();
+        },
+        onError: () => {
+          notification.error({ message: 'Thêm sinh viên thất bại' });
+          this.props.closeModal();
+        },
+      },
+    );
   }
 
   render() {
@@ -254,6 +266,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  insertStudents: params => dispatch(insertStudent(params)),
+  insertStudents: (params, meta) => dispatch(insertStudent(params, meta)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(ToJS(ImportModal));

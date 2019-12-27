@@ -6,6 +6,7 @@ import {
   Input,
   Button,
   Divider,
+  Popconfirm,
 } from 'antd';
 import { Link } from 'react-router-dom';
 import ROUTER from '../../../constant/router';
@@ -144,6 +145,16 @@ class StudentList extends React.Component {
         key: 'email',
         sorter: (a, b) => a.time.localeCompare(b.time),
         sortOrder: sortedInfo.columnKey === 'time' && sortedInfo.order,
+      },
+      {
+        title: <b>Xoá</b>,
+        dataIndex: 'student_code',
+        key: 'student_code',
+        render: value => (
+          <Popconfirm title="Bạn chắc chắn muốn xóa sinh viên này?" onConfirm={() => this.props.onDelete(value)}>
+            <a style={{ color: 'red' }}>Xóa</a>
+          </Popconfirm>
+        ),
       },
     ];
     const {

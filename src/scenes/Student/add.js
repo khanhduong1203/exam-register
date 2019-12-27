@@ -5,19 +5,20 @@ import {
 } from 'antd';
 import select from '../../utils/select';
 import {
-  insertStudent,
+  insertStudent, deleteStudent,
 } from './actions';
 import StudentForm from './components/Form';
 import toJS from '../../hoc/ToJS/index';
+import ROUTER from '../../constant/router';
 
 class AddStudentPage extends React.Component {
   handleSubmit = (payload) => {
-    console.log(payload);
     this.props.insertStudent(
       payload,
       {
         onSuccess: () => {
-          notification.success({ message: 'Cập nhập thành công' });
+          notification.success({ message: 'Thêm thành công' });
+          this.props.history.push(ROUTER.STUDENT.INDEX);
         },
         onError: error => notification.error({ message: `${error}, "Cập nhật gặp lỗi !"` }),
       },

@@ -5,11 +5,11 @@ import SubjectsPage from './list';
 import EditSubjectPage from './edit';
 import AddSubjectPage from './add';
 
-const Subject = () => (
+const Subject = history => (
   <Switch>
-    <Route path={ROUTER.SUBJECT.INDEX} component={SubjectsPage} exact />
-    <Route path={ROUTER.SUBJECT.ADD} component={AddSubjectPage} exact />
-    <Route path={ROUTER.SUBJECT.EDIT} component={EditSubjectPage} exact />
+    <Route path={ROUTER.SUBJECT.INDEX} component={SubjectsPage} exact history={history} />
+    <Route path={ROUTER.SUBJECT.ADD} component={AddSubjectPage} exact history={history} />
+    <Route path={ROUTER.SUBJECT.EDIT} component={EditSubjectPage} exact history={history} />
   </Switch>
 );
 

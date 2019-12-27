@@ -16,9 +16,9 @@ class RoomForm extends Component {
       okButtonProps: { type: 'danger' },
       cancelText: 'Huỷ',
       cancelButtonProps: { type: 'primary' },
-      title: `Bạn chắc chắn xoá ${subject.name}`,
+      title: `Bạn chắc chắn xoá ${subject.subject_name}`,
       content: 'Phòng và mọi thông tin liên quan sẽ bị xoá khỏi hệ thống !',
-      onOk: () => this.props.onDelete(subject),
+      onOk: () => this.props.onDelete(subject.subject_id),
     });
   };
 

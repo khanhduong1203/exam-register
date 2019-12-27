@@ -7,9 +7,11 @@ import select from '../../utils/select';
 import {
   getStudent,
   updateStudent,
+  deleteStudent,
 } from './actions';
 import StudentForm from './components/Form';
 import toJS from '../../hoc/ToJS/index';
+import ROUTER from '../../constant/router';
 
 class EditStudentPage extends React.Component {
   componentDidMount() {
@@ -25,6 +27,21 @@ class EditStudentPage extends React.Component {
     });
   }
 
+  deleteStudent = (id) => {
+    this.props.deleteStudent(
+      id,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Xóa sinh viên thành công' });
+          this.props.history.replace(ROUTER.STUDENT.INDEX);
+        },
+        onError: () => {
+          notification.error({ message: 'Xóa sinh viên thất bại' });
+        },
+      },
+    );
+  }
+
   render() {
     const {
       detail, isFetching,
@@ -37,6 +54,7 @@ class EditStudentPage extends React.Component {
         <StudentForm
           student={detail}
           onSubmit={this.handleSubmit}
+          onDelete={this.deleteStudent}
           editMode
         />
       </Card>
@@ -52,6 +70,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getStudent: id => dispatch(getStudent(id)),
   updateStudent: (id, payload, meta) => dispatch(updateStudent(id, payload, meta)),
+  deleteStudent: (id, meta) => dispatch(deleteStudent(id, meta)),
 });
 
 export default connect(

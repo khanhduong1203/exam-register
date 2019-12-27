@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Tabs } from 'antd';
+import { Tabs, notification } from 'antd';
 import WithAuthentication from '../../hoc/WithAuthentication';
 import List from './components/List';
 import select from '../../utils/select';
 import {
-  getStudentsIfNeed, getStudents, insertStudent,
+  getStudentsIfNeed, getStudents, insertStudent, deleteStudent,
 } from './actions';
 import toJS from '../../hoc/ToJS/index';
+import ROUTER from '../../constant/router';
 
 const { TabPane } = Tabs;
 
@@ -25,6 +26,20 @@ class EmployeesPage extends React.Component {
     this.props.getStudents();
   }
 
+  deleteStudent = (id) => {
+    this.props.deleteStudent(
+      id,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Xóa sinh viên thành công' });
+        },
+        onError: () => {
+          notification.error({ message: 'Xóa sinh viên thất bại' });
+        },
+      },
+    );
+  }
+
   render() {
     const {
       list, isFetching, history,
@@ -35,6 +50,7 @@ class EmployeesPage extends React.Component {
         isFetching={isFetching}
         history={history}
         getStudents={this.onGetAllStudents}
+        onDelete={this.deleteStudent}
       />
     );
   }
@@ -50,6 +66,7 @@ const mapDispatchToProps = dispatch => ({
   getStudentsIfNeed: params => dispatch(getStudentsIfNeed(params)),
   getStudents: params => dispatch(getStudents(params)),
   insertStudents: params => dispatch(insertStudent(params)),
+  deleteStudent: (id, meta) => dispatch(deleteStudent(id, meta)),
 });
 
 export default (connect(

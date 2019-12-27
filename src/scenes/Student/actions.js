@@ -61,8 +61,8 @@ export const insertStudent = (payload, meta) => async (dispatch) => {
     }
     dispatch({
       type: TYPE.INSERT_STUDENT_SUCCESS,
-      payload,
     });
+    dispatch(getStudents());
   } else {
     if (meta && meta.onError) {
       meta.onError();
@@ -79,13 +79,13 @@ export const updateStudent = (id, payload, meta) => async (dispatch) => {
     type: TYPE.UPDATING_STUDENT,
   });
   const { response, error } = await apiCall({ ...api, payload });
-  console.log(response);
   if (!error && response.status === 200 && response.data.success === true) {
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }
     dispatch({
       type: TYPE.UPDATE_STUDENT_SUCCESS,
+      id,
       payload,
     });
   } else {
@@ -98,8 +98,26 @@ export const updateStudent = (id, payload, meta) => async (dispatch) => {
   }
 };
 
-export const changeEmpAbility = (id, roomId, ability) => async (dispatch) => {
+export const deleteStudent = (id, meta) => async (dispatch) => {
+  const api = API_URLS.STUDENT.deleteStudent(id);
   dispatch({
-    type: TYPE.CHANGE_STUDENT_ABILITY, id, roomId, ability,
+    type: TYPE.DELETING_STUDENT,
   });
+  const { response, error } = await apiCall(api);
+  if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.DELETE_STUDENT_SUCCESS,
+      id,
+    });
+    if (meta && meta.onSuccess) {
+      meta.onSuccess();
+    }
+  } else {
+    if (meta && meta.onError) {
+      meta.onError();
+    }
+    dispatch({
+      type: TYPE.DELETE_STUDENT_FAILURE,
+    });
+  }
 };

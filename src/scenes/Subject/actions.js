@@ -55,13 +55,16 @@ export const insertSubject = (payload, meta) => async (dispatch) => {
   });
   const { response, error } = await apiCall({ ...api, payload });
   if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.INSERT_SUBJECT_SUCCESS,
+      newSubject: {
+        ...payload,
+        subject_id: response.data.data.subject_id,
+      },
+    });
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }
-    dispatch({
-      type: TYPE.INSERT_SUBJECT_SUCCESS,
-      payload,
-    });
   } else {
     if (meta && meta.onError) {
       meta.onError();
@@ -84,6 +87,7 @@ export const updateSubject = (id, payload, meta) => async (dispatch) => {
     }
     dispatch({
       type: TYPE.UPDATE_SUBJECT_SUCCESS,
+      id,
       payload,
     });
   } else {
@@ -92,6 +96,30 @@ export const updateSubject = (id, payload, meta) => async (dispatch) => {
     }
     dispatch({
       type: TYPE.UPDATE_SUBJECT_FAILURE,
+    });
+  }
+};
+
+export const deleteSubject = (id, meta) => async (dispatch) => {
+  const api = API_URLS.SUBJECT.deleteSubject(id);
+  dispatch({
+    type: TYPE.DELETING_SUBJECT,
+  });
+  const { response, error } = await apiCall(api);
+  if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.DELETE_SUBJECT_SUCCESS,
+      id,
+    });
+    if (meta && meta.onSuccess) {
+      meta.onSuccess();
+    }
+  } else {
+    if (meta && meta.onError) {
+      meta.onError();
+    }
+    dispatch({
+      type: TYPE.DELETE_SUBJECT_FAILURE,
     });
   }
 };

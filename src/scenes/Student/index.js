@@ -5,11 +5,11 @@ import EmployeesPage from './list';
 import AddEmployeePage from './add';
 import EditEmployeePage from './edit';
 
-const Employee = () => (
+const Employee = history => (
   <Switch>
-    <Route path={ROUTER.STUDENT.INDEX} component={EmployeesPage} exact />
-    <Route path={ROUTER.STUDENT.ADD} component={AddEmployeePage} exact />
-    <Route path={ROUTER.STUDENT.EDIT} component={EditEmployeePage} exact />
+    <Route path={ROUTER.STUDENT.INDEX} component={EmployeesPage} exact history={history} />
+    <Route path={ROUTER.STUDENT.ADD} component={AddEmployeePage} exact history={history} />
+    <Route path={ROUTER.STUDENT.EDIT} component={EditEmployeePage} exact history={history} />
   </Switch>
 );
 

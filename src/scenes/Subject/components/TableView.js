@@ -6,6 +6,7 @@ import {
   Input,
   Button,
   Divider,
+  Popconfirm,
 } from 'antd';
 import { Link } from 'react-router-dom';
 import ROUTER from '../../../constant/router';
@@ -117,6 +118,16 @@ export default class TableView extends React.Component {
         sorter: (a, b) => a.subject_name.localeCompare(b.subject_name),
         sortOrder: sortedInfo.columnKey === 'subject_name' && sortedInfo.order,
         ...this.getColumnSearchProps('subject_name'),
+      },
+      {
+        title: <b>Xóa</b>,
+        dataIndex: 'subject_id',
+        key: 'subject_id',
+        render: value => (
+          <Popconfirm title="Bạn chắc chắn muốn xóa học phần này?" onConfirm={() => this.props.onDelete(value)}>
+            <a style={{ color: 'red' }}>Xóa</a>
+          </Popconfirm>
+        ),
       },
     ];
     const {
