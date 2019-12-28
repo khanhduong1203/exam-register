@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Button, Col, Row, Table, Icon, Select, notification,
+  Button, Col, Row, Table, Icon, Select, notification, Divider,
 } from 'antd';
 import Excel from 'exceljs';
 import { saveAs } from 'file-saver';
 import WithAuthentication from '../../hoc/WithAuthentication';
 import select from '../../utils/select';
 import toJS from '../../hoc/ToJS/index';
+import { getExams } from '../Exam/action';
+import { getExamScheduleForStudent, registSubject } from './actions';
 
-const columns = shifts => [
+const { Option } = Select;
+
+const columns = regist => [
   {
     title: <b>STT</b>,
     width: 100,
@@ -17,55 +21,71 @@ const columns = shifts => [
   },
   {
     title: <b>Tên</b>,
-    dataIndex: 'name',
-    width: 200,
+    dataIndex: 'subject',
+    render: value => value[0]?.subject_name,
   },
   {
     title: <b>Mã học phần</b>,
-    dataIndex: 'code',
-    width: 200,
+    render: (value, record) => record?.subject[0]?.subject_code,
   },
   {
     title: <b>Ngày thi</b>,
-    dataIndex: 'day',
-    width: 150,
-    render: value => value.format('DD-MM-YYYY'),
+    render: (value, record) => record?.exam_shift[0]?.date,
   },
   {
     title: <b>Ca thi</b>,
     dataIndex: 'shift',
     align: 'center',
-    width: 200,
-    render: (value, record) => (
-      <Select
-        width={100}
-        defaultValue={value}
-      >
-        {shifts.map(s => (
-          <Select.Option value={s.id}>{s.name}</Select.Option>
-        ))}
-      </Select>
-    ),
+    render: (value, record) => record?.exam_shift[0]?.exam_shift_name,
   },
   {
     title: <b>Bắt đầu</b>,
     width: 100,
     align: 'center',
-    dataIndex: 'start',
+    render: (value, record) => record?.exam_shift[0]?.start_time,
   },
   {
     title: <b>Kết thúc</b>,
     width: 100,
     align: 'center',
-    dataIndex: 'end',
+    render: (value, record) => record?.exam_shift[0]?.end_time,
   },
   {
-    title: <b>Trạng thái</b>,
+    title: <b>Phòng thi</b>,
+    width: 100,
+    align: 'center',
+    render: (value, record) => `${record?.exam_room[0]?.room_name} - ${record?.exam_room[0]?.room_place}`,
+  },
+  {
+    title: <b>Trạng thái phòng</b>,
+    dataIndex: 'status',
+    align: 'center',
+    width: 100,
+    render: (value, record) => `${record?.exam_room[0]?.registered_amount}/${record?.exam_room[0]?.computer_max_amount}`,
+  },
+  {
+    title: <b>Đăng ký</b>,
     dataIndex: 'status',
     align: 'center',
     width: 100,
     render: (value, record) => (
-      value === true ? <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" /> : <Icon type="close-circle" theme="twoTone" twoToneColor="#FA3718" />
+      record?.student?.registered_exam_schedule === true
+        ? <i>Đã đăng ký</i>
+        : (record?.student?.can_join_exam === false
+          ? (
+            <a
+              onClick={
+                  () => regist({
+                    subject_id: record?.subject[0]?.subject_id,
+                    exam_schedule_id: record?.exam_schedule_id,
+                    student_id: record?.student?.student_id,
+                    can_join_exam: '1',
+                  })}
+            >
+              {'Đăng ký'}
+            </a>
+          )
+          : <a style={{ color: 'red' }}>Cấm thi</a>)
     ),
   },
 ];
@@ -76,6 +96,10 @@ class StudentExamPage extends Component {
   static getDerivedStateFromProps(props, state) {
     // props.getSubjectsIfNeed();
     return state;
+  }
+
+  componentDidMount() {
+    this.props.getExams();
   }
 
   onRegist = () => {
@@ -126,19 +150,53 @@ class StudentExamPage extends Component {
     saveAs(new Blob([buf]), 'Kết quả đăng ký thi.xlsx');
   }
 
+  selectExam = (e) => {
+    this.props.getScheduleForStudent(
+      e,
+      {
+        student_id: this.props.user.student_info.student_id,
+        exam_id: e,
+      },
+    );
+  }
+
+  regist = (payload) => {
+    this.props.registSubject(
+      this.props.exam.exam_id,
+      payload,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Đăng ký thành công' });
+        },
+        onError: () => {
+          notification.error({ message: 'Đăng ký thất bại' });
+        },
+      },
+    );
+  }
+
   render() {
     const {
-      exam, isFetching,
+      exam, isFetching, listExam, schedule,
     } = this.props;
     return (
       <React.Fragment>
+        <Row gutter={24}>
+          <Col span={8}>
+            <p>Chọn kì thi</p>
+            <Select style={{ width: '100%' }} onSelect={this.selectExam}>
+              {listExam.map(item => <Option value={item.exam_id}>{`${item.exam_name} - Năm học ${item.school_year}`}</Option>)}
+            </Select>
+          </Col>
+        </Row>
+        <Divider />
         <Row gutter={24}>
           <Col span={24}>
             <Table
               title={() => (
                 <Row gutter={24}>
                   <Col span={8}><p style={{ display: 'inline-block' }}>Danh sách môn thi</p></Col>
-                  <Col span={8}><p style={{ display: 'inline-block' }}>{`Kỳ thi: ${exam.name}`}</p></Col>
+                  <Col span={8}><p style={{ display: 'inline-block' }}>{`Kỳ thi: ${exam.exam_name} - Năm học ${exam.school_year}`}</p></Col>
                   <Col span={8}>
                     <Button
                       type="primary"
@@ -151,8 +209,8 @@ class StudentExamPage extends Component {
                 </Row>
               )}
               bordered
-              dataSource={exam.subjects}
-              columns={columns(exam.shifts)}
+              dataSource={schedule}
+              columns={columns(this.regist)}
               loading={isFetching}
               pagination={false}
               footer={() => (
@@ -178,12 +236,18 @@ class StudentExamPage extends Component {
 }
 
 const mapStateToProps = state => ({
-  exam: select(state, 'examRegistrationReducer', 'detail'),
+  exam: select(state, 'examRegistrationReducer', 'exam'),
+  schedule: select(state, 'examRegistrationReducer', 'schedule'),
+  user: select(state, 'authReducer', 'authUser'),
+  listExam: select(state, 'examReducer', 'list'),
   isFetching: select(state, 'examRegistrationReducer', 'isFetching'),
 });
 
 const mapDispatchToProps = dispatch => ({
   // getSubjectsIfNeed: params => dispatch(getSubjectsIfNeed(params)),
+  getExams: () => dispatch(getExams()),
+  getScheduleForStudent: (exam_id, payload) => dispatch(getExamScheduleForStudent(exam_id, payload)),
+  registSubject: (exam_id, payload, meta) => dispatch(registSubject(exam_id, payload, meta)),
 });
 
 export default WithAuthentication(false)(

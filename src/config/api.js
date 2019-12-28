@@ -211,6 +211,11 @@ export const API_URLS = {
       method: 'POST',
       headers: HEADERS.rawHeader(),
     }),
+    getExamSchedule: exam_id => ({
+      endPoint: `/api/student/exam_schedule/${exam_id}`,
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+    }),
   },
   SUBJECT: {
     getSubjects: () => ({

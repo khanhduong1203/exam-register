@@ -11,6 +11,8 @@ const initialState = fromJS({
     shifts: SHIFTS,
     name: 'Học kì II - năm 2019',
   },
+  schedule: [],
+  exam: {},
   isFetching: false,
   didInvalidate: true,
 });
@@ -45,6 +47,11 @@ const examRegistrationReducer = (state = initialState, action) => {
     case TYPE.INSERT_EXAM_SUCCESS:
       return state.merge({
         isFetching: false,
+      });
+    case TYPE.GET_SCHEDULE_FOR_STUDENT_SUCCESS:
+      return state.merge({
+        schedule: action.payload[0].schedule,
+        exam: action.payload[0].exam[0],
       });
     case TYPE.INSERT_EXAM_FAILURE:
     case TYPE.GET_EXAM_FAILURE:
