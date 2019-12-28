@@ -1,5 +1,6 @@
 /* eslint-disable no-case-declarations */
 import { fromJS } from 'immutable';
+import moment from 'moment';
 import { TYPE } from '../../config/actions';
 // import { combineReducers } from 'redux-immutable';
 
@@ -41,8 +42,15 @@ const EXAM = (state = EXAMState, action) => {
     case TYPE.GET_EXAMS_FAILURE:
       return EXAMState;
     case TYPE.SELECT_EXAM_SUCCESS:
+      arr = action.payload.subject !== undefined && action.payload.subject.map(e => ({
+        ...e,
+        date: moment().format('DD-MM-YYYY'),
+        exam_shift_id: '',
+        exam_room_id: '',
+      }));
       return state.merge({
         detail: action.payload,
+        schedule: arr,
         isFetching: false,
       });
     case TYPE.SELECT_EXAM_FAILURE:

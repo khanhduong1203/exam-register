@@ -54,7 +54,7 @@ const columnsSubject = (filteredInfo, sortedInfo, openModal) => [
   },
 ];
 
-const columnsSchedule = () => [
+const columnsSchedule = (SHIFTS, ROOMS) => [
   {
     title: <b>Tên môn thi</b>,
     dataIndex: 'subject_name',
@@ -66,14 +66,31 @@ const columnsSchedule = () => [
   {
     title: <b>Ngày thi</b>,
     dataIndex: 'date',
+    render: (value, record) => (
+      <DatePicker defaultValue={moment(value, 'DD-MM-YYYY')} format="DD-MM-YYYY" />
+    ),
   },
   {
     title: <b>Ca thi</b>,
     dataIndex: 'exam_shift',
+    render: (value, record) => (
+      <Select>
+        {SHIFTS.map(shift => (
+          <Option value={shift.exam_shift_id}>{shift.exam_shift_name}</Option>
+        ))}
+      </Select>
+    ),
   },
   {
     title: <b>Phòng thi</b>,
     dataIndex: 'exam_room',
+    render: (value, record) => (
+      <Select mode="multiple">
+        {ROOMS.map(r => (
+          <Option value={r.exam_room_id}>{`${r.room_name} - ${r.room_place}`}</Option>
+        ))}
+      </Select>
+    ),
   },
   {
     title: <b>Số máy tối đa</b>,
@@ -199,7 +216,7 @@ class FormExam extends React.Component {
       editMode,
       exam,
       selectRoom,
-      listSubject,
+      schedule,
       students,
     } = this.props;
     const { subject } = this.state;
@@ -232,7 +249,7 @@ class FormExam extends React.Component {
                     <TabPane key="exam-subject" tab="Danh sách môn thi">
                       <Table
                         columns={columnsSubject('', '', this.onOpenModal)}
-                        dataSource={listSubject}
+                        dataSource={exam.subject}
                         bordered
                         rowKey={r => r.subject_id}
                         pagination={false}
@@ -243,8 +260,8 @@ class FormExam extends React.Component {
                 </TabPane>
                 <TabPane key="exam-schedule" tab="Lịch thi">
                   <Table
-                    dataSource={[]}
-                    columns={columnsSchedule()}
+                    dataSource={schedule}
+                    columns={columnsSchedule(exam.exam_shift, exam.exam_room)}
                     rowKey={r => r.subject_id}
                     pagination={false}
                     scroll={{ x: 'max-content', y: 500 }}
@@ -269,6 +286,7 @@ class FormExam extends React.Component {
 const mapStateToProps = state => ({
   exam: select(state, 'examReducer', 'detail'),
   students: select(state, 'studentReducer', 'list'),
+  schedule: select(state, 'examReducer', 'schedule'),
 });
 
 const mapDispatchToProps = dispatch => ({
