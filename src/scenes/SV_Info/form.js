@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, Form, Input } from 'antd';
+import ToJS from '../../hoc/ToJS';
 
 class UserForm extends React.Component {
   render() {
@@ -19,7 +20,7 @@ class UserForm extends React.Component {
         </Form.Item>
         <Form.Item label="MSV">
           {getFieldDecorator('msv', {
-            initialValue: editMode ? user.msv : '',
+            initialValue: editMode ? user.student_code : '',
             rules: [
               {
                 required: true,
@@ -29,8 +30,8 @@ class UserForm extends React.Component {
           })(<Input type="text" placeholder="Nhập tên ..." />)}
         </Form.Item>
         <Form.Item label="SĐT">
-          {getFieldDecorator('phone', {
-            initialValue: editMode ? user.phone : '',
+          {getFieldDecorator('phone_number', {
+            initialValue: editMode ? user.phone_number : '',
             rules: [
               {
                 required: true,
@@ -40,8 +41,8 @@ class UserForm extends React.Component {
           })(<Input type="text" placeholder="Nhập tên ..." />)}
         </Form.Item>
         <Form.Item label="Mail">
-          {getFieldDecorator('mail', {
-            initialValue: editMode ? user.mail : '',
+          {getFieldDecorator('email', {
+            initialValue: editMode ? user.email : '',
             rules: [
               {
                 required: true,
@@ -55,4 +56,4 @@ class UserForm extends React.Component {
   }
 }
 
-export default Form.create()(UserForm);
+export default Form.create()(ToJS(UserForm));

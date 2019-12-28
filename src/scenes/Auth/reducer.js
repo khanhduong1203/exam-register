@@ -32,6 +32,7 @@ const authReducer = (state = initialState, action) => {
       }
       if (isSuccessfulApiCall(action)) {
         const {
+          user,
           token,
           role,
           refresh_token,
@@ -45,6 +46,7 @@ const authReducer = (state = initialState, action) => {
             isFetching: false,
             role,
             error: false,
+            authUser: user,
           }),
         );
       }

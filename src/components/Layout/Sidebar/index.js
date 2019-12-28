@@ -67,10 +67,10 @@ class SiderMenu extends React.Component {
         </Row>
         {!collapsed && (
           <Row gutter={24}>
-            <Col span={4} />
-            <Col span={16} style={{ textAlign: 'center' }}>
+            {/* <Col span={4} /> */}
+            <Col span={24} style={{ textAlign: 'center' }}>
               <UserDropdown onClick={this.handleChangePassword}>
-                <h2>{user}</h2>
+                <h2>{role === 'admin' ? role : user.student_info.name}</h2>
               </UserDropdown>
             </Col>
           </Row>

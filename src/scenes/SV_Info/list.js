@@ -12,15 +12,11 @@ const { Meta } = Card;
 class StudentInfoPage extends Component {
   state = {}
 
-  static getDerivedStateFromProps(props, state) {
-    // props.getSubjectsIfNeed();
-    return state;
-  }
-
   render() {
     const {
       user, isFetching,
     } = this.props;
+    console.log(user);
     return (
       <Row gutter={24}>
         <Card
@@ -38,7 +34,7 @@ class StudentInfoPage extends Component {
               </Card>
             </Col>
             <Col span={8}>
-              <UserForm user={user} />
+              <UserForm editMode user={user.student_info} />
             </Col>
           </Row>
         </Card>
@@ -49,6 +45,7 @@ class StudentInfoPage extends Component {
 
 const mapStateToProps = state => ({
   list: select(state, 'subjectReducer', 'list'),
+  user: select(state, 'authReducer', 'authUser'),
   isFetching: select(state, 'subjectReducer', 'isFetching'),
 });
 
@@ -60,5 +57,5 @@ export default WithAuthentication(false)(
   (toJS(connect(
     mapStateToProps,
     mapDispatchToProps,
-  )((StudentInfoPage)))),
+  )(toJS(StudentInfoPage)))),
 );

@@ -20,6 +20,7 @@ import { pushNotification, popNotification } from './action';
 import StudentInfo from '../SV_Info';
 import ExamRegistration from '../SV_Exam';
 import { logOut, changePassword } from '../Auth/action';
+import ToJS from '../../hoc/ToJS';
 
 const { Content, Header } = Layout;
 
@@ -44,7 +45,7 @@ class AppLayout extends Component {
           history={history}
           logOut={logOut}
           role={role}
-          user={role}
+          user={user.toJS()}
         />
         <Content>
           <Content style={{ margin: '16px' }}>
@@ -72,8 +73,7 @@ class AppLayout extends Component {
 
 const mapStateToProps = state => ({
   notifications: select(state, ['appReducer'], 'notifications'),
-  user: select(state, 'authReducer'),
-  // user: select(state, 'authReducer', 'authUser'),
+  user: select(state, 'authReducer', 'authUser'),
   userId: select(state, 'authReducer', 'ID'),
   userTypeId: select(state, 'authReducer', 'UserTypeID'),
   role: select(state, 'authReducer', 'role'),

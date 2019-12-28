@@ -387,9 +387,6 @@ class EditTable extends React.Component {
           rowKey={r => r.key}
           pagination={false}
           scroll={{ x: 'max-content', y: 500 }}
-          footer={() => (
-            <Button type="primary">Cập nhật</Button>
-          )}
         />
       </EditableContext.Provider>
     );

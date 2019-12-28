@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Form, Input, DatePicker, Button, TimePicker, InputNumber, Table, Divider, Select, Tabs, List, notification,
+  Row, Col, Form, Input, DatePicker, Button, TimePicker, InputNumber, Table, Divider, Select, Tabs, List, notification, Popconfirm,
 } from 'antd';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -12,7 +12,7 @@ import FormShift from './formShift';
 import FormRoom from './formRoom';
 import select from '../../../utils/select';
 import {
-  updateExamRoom, updateExamShift, deleteExamRoom, deleteExamShift, createStudentSubject,
+  updateExamRoom, updateExamShift, deleteExamRoom, deleteExamShift, createStudentSubject, changeRoom, changeShift, changeDate, createExamSchedule, getExamSchedule, deleteExamSubject,
 } from '../action';
 
 const { Item } = Form;
@@ -54,7 +54,7 @@ const columnsSubject = (filteredInfo, sortedInfo, openModal) => [
   },
 ];
 
-const columnsSchedule = (SHIFTS, ROOMS) => [
+const columnsSchedule = (SHIFTS, ROOMS, changeDate, changeShift, changeRoom, deleteExamSubject) => [
   {
     title: <b>Tên môn thi</b>,
     dataIndex: 'subject_name',
@@ -67,14 +67,19 @@ const columnsSchedule = (SHIFTS, ROOMS) => [
     title: <b>Ngày thi</b>,
     dataIndex: 'date',
     render: (value, record) => (
-      <DatePicker defaultValue={moment(value, 'DD-MM-YYYY')} format="DD-MM-YYYY" />
+      <DatePicker
+        allowClear={false}
+        defaultValue={moment(value, 'DD-MM-YYYY')}
+        format="DD-MM-YYYY"
+        onChange={e => changeDate(e.format('DD-MM-YYYY'), record.subject_id)}
+      />
     ),
   },
   {
     title: <b>Ca thi</b>,
     dataIndex: 'exam_shift',
     render: (value, record) => (
-      <Select>
+      <Select onSelect={e => changeShift(e, record.subject_id)}>
         {SHIFTS.map(shift => (
           <Option value={shift.exam_shift_id}>{shift.exam_shift_name}</Option>
         ))}
@@ -85,7 +90,7 @@ const columnsSchedule = (SHIFTS, ROOMS) => [
     title: <b>Phòng thi</b>,
     dataIndex: 'exam_room',
     render: (value, record) => (
-      <Select mode="multiple">
+      <Select mode="multiple" onChange={e => changeRoom(e, record.subject_id)}>
         {ROOMS.map(r => (
           <Option value={r.exam_room_id}>{`${r.room_name} - ${r.room_place}`}</Option>
         ))}
@@ -93,12 +98,12 @@ const columnsSchedule = (SHIFTS, ROOMS) => [
     ),
   },
   {
-    title: <b>Số máy tối đa</b>,
-    dataIndex: 'xx',
-  },
-  {
-    title: <b>Số máy trống</b>,
-    dataIndex: 'yy',
+    title: <b>Xóa</b>,
+    render: (value, record) => (
+      <Popconfirm title="Bỏ môn thi này?" onConfirm={() => deleteExamSubject(record.subject_id)}>
+        <a style={{ color: 'red' }}>Xóa</a>
+      </Popconfirm>
+    ),
   },
 ];
 class FormExam extends React.Component {
@@ -210,19 +215,54 @@ class FormExam extends React.Component {
     );
   }
 
+  changeDate = (date, subject_id) => {
+    this.props.changeDate(date, subject_id);
+  }
+
+  createExamSchedule = () => {
+    const { schedule, exam } = this.props;
+    const arr = [...schedule];
+    // eslint-disable-next-line prefer-const
+    let payload = [];
+    arr.forEach((item) => {
+      item.exam_room_id.forEach((room) => {
+        payload.push({
+          ...item,
+          exam_room_id: room,
+          exam_id: exam.exam[0].exam_id,
+        });
+      });
+    });
+    // console.log(payload);
+    this.props.createExamSchedule(
+      payload,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Tạo lịch thi thành công' });
+        },
+        onError: () => {
+          notification.error({ message: 'Không tạo được lịch cho kì thi này' });
+        },
+      },
+    );
+  }
+
   render() {
     const {
       form: { getFieldDecorator },
       editMode,
       exam,
-      selectRoom,
       schedule,
       students,
+      changeDate,
+      changeShift,
+      changeRoom,
+      deleteExamSubject,
     } = this.props;
     const { subject } = this.state;
     return (
       <React.Fragment>
-        <Form onSubmit={this.handleSubmit}>
+        <Form>
           <Row gutter={24}>
             <Col>
               <Tabs>
@@ -259,18 +299,27 @@ class FormExam extends React.Component {
                   </Tabs>
                 </TabPane>
                 <TabPane key="exam-schedule" tab="Lịch thi">
-                  <Table
-                    dataSource={schedule}
-                    columns={columnsSchedule(exam.exam_shift, exam.exam_room)}
-                    rowKey={r => r.subject_id}
-                    pagination={false}
-                    scroll={{ x: 'max-content', y: 500 }}
-                  />
+                  <Row gutter={24}>
+                    <Table
+                      dataSource={schedule}
+                      columns={columnsSchedule(exam.exam_shift, exam.exam_room, changeDate, changeShift, changeRoom, deleteExamSubject)}
+                      rowKey={r => r.subject_id}
+                      pagination={false}
+                      scroll={{ x: 'max-content', y: 500 }}
+                    />
+                  </Row>
+                  <Divider />
+                  <Row gutter={24}>
+                    <Col>
+                      <Button type="primary" style={{ float: 'right' }} onClick={() => this.createExamSchedule()}>Tạo lịch thi</Button>
+                    </Col>
+                  </Row>
                 </TabPane>
               </Tabs>
             </Col>
           </Row>
         </Form>
+        <Divider />
         <ImportModal
           visible={this.state.visible}
           students={students}
@@ -295,6 +344,12 @@ const mapDispatchToProps = dispatch => ({
   deleteExamShift: (id, meta) => dispatch(deleteExamShift(id, meta)),
   deleteExamRoom: (id, payload, meta) => dispatch(deleteExamRoom(id, payload, meta)),
   createStudentSubject: (payload, meta) => dispatch(createStudentSubject(payload, meta)),
+  changeDate: (date, subject_id) => dispatch(changeDate(date, subject_id)),
+  changeRoom: (room_id, subject_id) => dispatch(changeRoom(room_id, subject_id)),
+  changeShift: (shift_id, subject_id) => dispatch(changeShift(shift_id, subject_id)),
+  deleteExamSubject: subject_id => dispatch(deleteExamSubject(subject_id)),
+  createExamSchedule: (payload, meta) => dispatch(createExamSchedule(payload, meta)),
+  getExamSchedule: (payload, meta) => dispatch(getExamSchedule(payload, meta)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Form.create()(ToJS(FormExam)));

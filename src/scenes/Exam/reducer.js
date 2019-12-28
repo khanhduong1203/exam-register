@@ -53,6 +53,38 @@ const EXAM = (state = EXAMState, action) => {
         schedule: arr,
         isFetching: false,
       });
+    case TYPE.CHANGE_DATE:
+      arr = state.get('schedule');
+      arr = [...arr];
+      index = arr.findIndex(e => e.subject_id === action.subject_id);
+      arr[index] = { ...arr[index], date: action.date };
+      return state.merge({
+        schedule: arr,
+      });
+    case TYPE.CHANGE_SHIFT:
+      arr = state.get('schedule');
+      arr = [...arr];
+      index = arr.findIndex(e => e.subject_id === action.subject_id);
+      arr[index] = { ...arr[index], exam_shift_id: action.exam_shift_id };
+      return state.merge({
+        schedule: arr,
+      });
+    case TYPE.CHANGE_ROOM:
+      arr = state.get('schedule');
+      arr = [...arr];
+      index = arr.findIndex(e => e.subject_id === action.subject_id);
+      arr[index] = { ...arr[index], exam_room_id: action.exam_room_id };
+      return state.merge({
+        schedule: arr,
+      });
+    case TYPE.DELETE_EXAM_SUBJECT:
+      arr = state.get('schedule');
+      arr = [...arr];
+      index = arr.findIndex(e => e.subject_id === action.subject_id);
+      arr.splice(index, 1);
+      return state.merge({
+        schedule: arr,
+      });
     case TYPE.SELECT_EXAM_FAILURE:
       return state.merge({
         isFetching: false,

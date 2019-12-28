@@ -290,3 +290,58 @@ export const createExamSchedule = (payload, meta) => async (dispatch) => {
     }
   }
 };
+
+export const getExamSchedule = (exam_id, meta) => async (dispatch) => {
+  dispatch({ type: TYPE.GETTING_EXAM_SCHEDULE });
+  const api = API_URLS.EXAM_SCHEDULE.getExamScheduleByExamId(exam_id);
+  const { response, error } = await apiCall(api);
+  if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.GET_EXAM_SCHEDULE_SUCCESS,
+      payload: response.data.data,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_SUCCESS] },
+    });
+    if (meta && meta.onSuccess) {
+      meta.onSuccess();
+    }
+  } else {
+    dispatch({
+      type: TYPE.GET_EXAM_SCHEDULE_FAILURE,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_FAILURE] },
+    });
+    if (meta && meta.onError) {
+      meta.onError();
+    }
+  }
+};
+
+export const changeDate = (date, subject_id) => async (dispatch) => {
+  dispatch({
+    type: TYPE.CHANGE_DATE,
+    date,
+    subject_id,
+  });
+};
+
+export const changeShift = (exam_shift_id, subject_id) => async (dispatch) => {
+  dispatch({
+    type: TYPE.CHANGE_SHIFT,
+    exam_shift_id,
+    subject_id,
+  });
+};
+
+export const changeRoom = (exam_room_id, subject_id) => async (dispatch) => {
+  dispatch({
+    type: TYPE.CHANGE_ROOM,
+    exam_room_id,
+    subject_id,
+  });
+};
+
+export const deleteExamSubject = subject_id => async (dispatch) => {
+  dispatch({
+    type: TYPE.DELETE_EXAM_SUBJECT,
+    subject_id,
+  });
+};
