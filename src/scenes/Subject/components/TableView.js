@@ -175,7 +175,7 @@ export default class TableView extends React.Component {
         dataIndex: 'subject_id',
         key: 'subject_id',
         render: value => (
-          <Popconfirm title="Bạn chắc chắn muốn xóa học phần này?" onConfirm={() => this.props.onDelete(value)}>
+          <Popconfirm title="Bạn chắc chắn muốn xóa học phần này?" onConfirm={() => this.props.deleteSubject(value)}>
             <a style={{ color: 'red' }}>Xóa</a>
           </Popconfirm>
         ),
