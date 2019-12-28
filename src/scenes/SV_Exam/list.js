@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Button, Col, Row, Table, Icon, Select, notification, Divider,
+  Button, Col, Row, Table, Icon, Select, notification, Divider, Popconfirm,
 } from 'antd';
 import Excel from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -58,32 +58,34 @@ const columns = regist => [
   },
   {
     title: <b>Trạng thái phòng</b>,
-    dataIndex: 'status',
     align: 'center',
     width: 100,
     render: (value, record) => `${record?.exam_room[0]?.registered_amount}/${record?.exam_room[0]?.computer_max_amount}`,
   },
   {
     title: <b>Đăng ký</b>,
-    dataIndex: 'status',
     align: 'center',
     width: 100,
     render: (value, record) => (
       record?.student?.registered_exam_schedule === true
         ? <i>Đã đăng ký</i>
-        : (record?.student?.can_join_exam === false
+        : (record?.student?.can_join_exam === true
           ? (
-            <a
-              onClick={
-                  () => regist({
-                    subject_id: record?.subject[0]?.subject_id,
-                    exam_schedule_id: record?.exam_schedule_id,
-                    student_id: record?.student?.student_id,
-                    can_join_exam: '1',
-                  })}
+            <Popconfirm
+              title="Bạn chắc chắn muốn đăng ký thi học phần này?"
+              okText="Đồng ý"
+              cancelText="Không"
+              onConfirm={() => regist(record?.student?.student_subject_id, {
+                subject_id: record?.subject[0]?.subject_id,
+                exam_schedule_id: record?.exam_schedule_id,
+                student_id: record?.student?.student_id,
+                can_join_exam: '1',
+              })}
             >
-              {'Đăng ký'}
-            </a>
+              <a>
+                {'Đăng ký'}
+              </a>
+            </Popconfirm>
           )
           : <a style={{ color: 'red' }}>Cấm thi</a>)
     ),
@@ -92,11 +94,6 @@ const columns = regist => [
 
 class StudentExamPage extends Component {
   state = {}
-
-  static getDerivedStateFromProps(props, state) {
-    // props.getSubjectsIfNeed();
-    return state;
-  }
 
   componentDidMount() {
     this.props.getExams();
@@ -118,25 +115,27 @@ class StudentExamPage extends Component {
   }
 
   exportFile = async () => {
-    const { exam } = this.props;
+    const { exam, user, schedule } = this.props;
     const wb = new Excel.Workbook();
     const ws = wb.addWorksheet();
     ws.addRow(['Kết quả đăng ký thi']); ws.mergeCells('A1:D1');
-    ws.addRow(['Kỳ thi', 'Cuối kì 2']); ws.mergeCells('B2:D2');
-    ws.addRow(['Sinh viên', 'Nguyễn Văn A']); ws.mergeCells('B3:D3');
-    ws.addRow(['Msv', '12316562']); ws.mergeCells('B4:D4');
+    ws.addRow(['Kỳ thi', `${exam.exam_name} - Năm học ${exam.school_year}`]); ws.mergeCells('B2:D2');
+    ws.addRow(['Sinh viên', user.student_info.name]); ws.mergeCells('B3:D3');
+    ws.addRow(['Msv', user.student_info.student_code]); ws.mergeCells('B4:D4');
     ws.addRow([]); ws.addRow([]); ws.addRow([]);
-    const header = ['STT', 'Tên', 'Mã học phần', 'Ngày thi', 'Ca thi', 'Bắt đầu', 'Kết thúc'];
+    const header = ['STT', 'Tên', 'Mã học phần', 'Ngày thi', 'Ca thi', 'Bắt đầu', 'Kết thúc', 'Phòng thi'];
     ws.addRow(header);
-    exam.subjects.forEach((s, i) => {
+    const arr = [...schedule];
+    arr.filter(e => e.student.registered_exam_schedule === true).forEach((s, i) => {
       const tmp = {
         stt: i + 1,
-        name: s.name,
-        code: s.code,
-        day: s.day.format('DD-MM-YYYY'),
-        shift: this.getShiftName(s.shift),
-        start: s.start,
-        end: s.end,
+        name: s?.subject[0]?.subject_name,
+        code: s?.subject[0]?.subject_code,
+        date: s?.exam_shift[0]?.date,
+        shift: s?.exam_shift[0]?.exam_shift_name,
+        start: s?.exam_shift[0]?.start_time,
+        end: s?.exam_shift[0]?.end_time,
+        room: `${s?.exam_room[0]?.room_name} - ${s?.exam_room[0]?.room_place}`,
       };
       ws.addRow(Object.values(tmp));
     });
@@ -160,13 +159,14 @@ class StudentExamPage extends Component {
     );
   }
 
-  regist = (payload) => {
+  regist = (id, payload) => {
     this.props.registSubject(
-      this.props.exam.exam_id,
+      id,
       payload,
       {
         onSuccess: () => {
           notification.success({ message: 'Đăng ký thành công' });
+          this.selectExam(this.props.exam.exam_id);
         },
         onError: () => {
           notification.error({ message: 'Đăng ký thất bại' });
@@ -197,15 +197,6 @@ class StudentExamPage extends Component {
                 <Row gutter={24}>
                   <Col span={8}><p style={{ display: 'inline-block' }}>Danh sách môn thi</p></Col>
                   <Col span={8}><p style={{ display: 'inline-block' }}>{`Kỳ thi: ${exam.exam_name} - Năm học ${exam.school_year}`}</p></Col>
-                  <Col span={8}>
-                    <Button
-                      type="primary"
-                      style={{ float: 'right', marginRight: '10px', display: 'inline-block' }}
-                      onClick={() => this.onRegist()}
-                    >
-                      Đăng ký
-                    </Button>
-                  </Col>
                 </Row>
               )}
               bordered

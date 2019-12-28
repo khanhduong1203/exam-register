@@ -32,6 +32,7 @@ export const registSubject = (exam_id, payload, meta) => async (dispatch) => {
       type: TYPE.UPDATE_STUDENT_SUBJECT_SUCCESS,
       payload: response.data.data !== null ? response.data.data : [],
     });
+    // dispatch(getExamScheduleForStudent(exam_id, { exam_id, student_id: payload.student_id }));
     if (meta && meta.onSuccess) {
       meta.onSuccess();
     }
