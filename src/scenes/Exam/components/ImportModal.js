@@ -14,15 +14,15 @@ const { TabPane } = Tabs;
 const columns = [
   {
     title: 'MSV',
-    dataIndex: 'MSV',
+    dataIndex: 'student_code',
   },
   {
     title: 'TÊN',
-    dataIndex: 'NAME',
+    dataIndex: 'student_name',
   },
   {
-    title: 'MÔN HỌC',
-    dataIndex: 'CLASS',
+    title: 'ĐỦ ĐIỀU KIỆN DỰ THI',
+    dataIndex: 'can_join_exam',
   },
 ];
 
@@ -40,9 +40,8 @@ class ImportModal extends React.Component {
     this.fileUpload = React.createRef();
   }
 
-
   isItemError = (item) => {
-    if ((item.MSV === undefined || item.CLASS === undefined)) {
+    if ((item.student_code === undefined)) {
       return true;
     }
     return false;
@@ -50,13 +49,13 @@ class ImportModal extends React.Component {
 
   isExist = (item) => {
     let result = false;
-    // const { students } = this.props;
-    // for (let i = 0; i < students.length; i++) {
-    //   if (item.MSV === students[i].msv && item.CLASS === students.CLASS) {
-    //     result = true;
-    //     break;
-    //   }
-    // }
+    const { students } = this.props;
+    for (let i = 0; i < students.length; i++) {
+      if (item.student_code === students[i].student_code) {
+        result = true;
+        break;
+      }
+    }
     return result;
   }
 
@@ -85,20 +84,20 @@ class ImportModal extends React.Component {
         }
         if (startAt === 0) {
           notification.error({ message: 'upload failed!' });
-          this.setState({ isFetching: false, name: '' });
+          this.setState({ isFetching: false, student_name: '' });
         } else {
           this.setState({ isFetching: true });
-          data = XLSX.utils.sheet_to_json(Sheet, { range: startAt, header: ['MSV', 'NAME', 'CLASS'] });
+          data = XLSX.utils.sheet_to_json(Sheet, { range: startAt, header: ['student_code', 'student_name', 'can_join_exam'] });
           /** format empty cell */
           data.forEach((item, index) => {
-            if (item.MSV !== undefined) {
-              item.MSV = (item.MSV.toString().trim() === '') ? undefined : item.MSV.toString().trim();
+            if (item.student_code !== undefined) {
+              item.student_code = (item.student_code.toString().trim() === '') ? undefined : item.student_code.toString().trim();
             }
-            if (item.NAME !== undefined) {
-              item.NAME = (item.NAME.toString().trim() === '') ? undefined : item.NAME.toString().trim();
+            if (item.student_name !== undefined) {
+              item.student_name = (item.student_name.toString().trim() === '') ? undefined : item.student_name.toString().trim();
             }
             if (item.CLASS !== undefined) {
-              item.CLASS = (item.CLASS.toString().trim() === '') ? undefined : item.CLASS.toString().trim();
+              item.can_join_exam = (item.can_join_exam.toString().trim() === '') ? undefined : item.can_join_exam.toString().trim();
             }
           });
           /** read each row */
@@ -107,7 +106,7 @@ class ImportModal extends React.Component {
               dataError.push(item);
             } else {
               // eslint-disable-next-line no-lonely-if
-              if (!this.isExist(item)) {
+              if (this.isExist(item)) {
                 dataNew.push(item);
               }
             }
@@ -136,6 +135,33 @@ class ImportModal extends React.Component {
     }
   }
 
+  getStudentId = (code) => {
+    let arr = [...this.props.students];
+    const std = arr.find(e => e.student_code === code);
+    return std.student_id;
+  }
+
+  closeModal = () => {
+    this.setState({
+      fileName: '',
+      data: [],
+      error: [],
+      fileList: [],
+    });
+    this.props.closeModal();
+  }
+
+  pushStudentSubject = () => {
+    const payload = this.state.data.map(item => ({
+      ...item,
+      exam_schedule_id: '',
+      can_join_exam: item.can_join_exam === 'Có' ? '1' : '0',
+      subject_id: this.props.subject.subject_id,
+      student_id: this.getStudentId(item.student_code),
+    }));
+    this.props.onSubmit(payload);
+  };
+
   render() {
     const { visible, closeModal, subject } = this.props;
     const {
@@ -155,8 +181,9 @@ class ImportModal extends React.Component {
     return (
       <Modal
         visible={visible}
-        onOk={closeModal}
-        onCancel={closeModal}
+        onOk={this.pushStudentSubject}
+        onCancel={this.closeModal}
+        closable={false}
       >
         <Row gutter={24}>
           <Col span={8}>
@@ -169,7 +196,7 @@ class ImportModal extends React.Component {
             {errorFile && <Alert style={{ marginTop: 10 }} type="error" showIcon message="Chọn file để upload" />}
           </Col>
           <Col span={16}>
-            <b>{`${subject.code} - ${subject.name}`}</b>
+            <b>{`${subject.subject_code} - ${subject.subject_name}`}</b>
           </Col>
         </Row>
         <Divider dashed />

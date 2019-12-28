@@ -37,7 +37,10 @@ export const createExam = (payload, meta) => async (dispatch) => {
   if (!error && response.status === 200 && response.data.success === true) {
     dispatch({
       type: TYPE.INSERT_EXAM_SUCCESS,
-      payload,
+      newExam: {
+        ...payload,
+        exam_id: response.data.data.exam_id,
+      },
       meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_SUCCESS] },
     });
     if (meta && meta.onSuccess) {
@@ -224,6 +227,34 @@ export const deleteExamRoom = (id, meta) => async (dispatch) => {
   } else {
     dispatch({
       type: TYPE.DELETE_EXAM_ROOM_FAILURE,
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_FAILURE] },
+    });
+    if (meta && meta.onError) {
+      meta.onError();
+    }
+  }
+};
+
+/** STUDENT_SUBJECT */
+export const createStudentSubject = (payload, meta) => async (dispatch) => {
+  dispatch({ type: TYPE.INSERTING_STUDENT_SUBJECT });
+  const api = API_URLS.STUDENT_SUBJECT.createStudentSubject();
+  const { response, error } = await apiCall({ ...api, payload });
+  if (!error && response.status === 200 && response.data.success === true) {
+    dispatch({
+      type: TYPE.INSERT_STUDENT_SUBJECT_SUCCESS,
+      // newRoom: {
+      //   ...payload,
+      //   exam_room_id: response.data.data.exam_room_id,
+      // },
+      meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_SUCCESS] },
+    });
+    if (meta && meta.onSuccess) {
+      meta.onSuccess();
+    }
+  } else {
+    dispatch({
+      type: TYPE.INSERT_STUDENT_SUBJECT_FAILURE,
       meta: { prefix: [PREFIX.EXAM, PREFIX.API_CALLED_FAILURE] },
     });
     if (meta && meta.onError) {

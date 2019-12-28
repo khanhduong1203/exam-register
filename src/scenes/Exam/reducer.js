@@ -29,6 +29,15 @@ const EXAM = (state = EXAMState, action) => {
         didInvalidate: false,
         isFetching: false,
       });
+    case TYPE.INSERT_EXAM_SUCCESS:
+      arr = state.get('list');
+      arr = [...arr];
+      arr.push(action.newExam);
+      return state.merge({
+        list: arr,
+        didInvalidate: false,
+        isFetching: false,
+      });
     case TYPE.GET_EXAMS_FAILURE:
       return EXAMState;
     case TYPE.SELECT_EXAM_SUCCESS:

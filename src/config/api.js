@@ -224,7 +224,7 @@ export const API_URLS = {
       headers: HEADERS.jsonHeader(),
     }),
     getSubject: id => ({
-      endPoint: `/api/subject/subject_code/${id}`,
+      endPoint: `/api/subject/${id}`,
       method: 'GET',
       headers: HEADERS.rawHeader(),
     }),
@@ -253,12 +253,12 @@ export const API_URLS = {
     createStudentSubject: () => ({
       endPoint: '/api/student_subject/create',
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     updateStudentSubject: id => ({
       endPoint: `/api/student_subject/${id}`,
       method: 'POST',
-      headers: HEADERS.header(),
+      headers: HEADERS.jsonHeader(),
     }),
     deleteStudentSubject: id => ({
       endPoint: `/api/student_subject/delete/${id}`,

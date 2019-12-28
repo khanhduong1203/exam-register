@@ -7,9 +7,12 @@ import {
 import * as XLSX from 'xlsx';
 import { connect } from 'react-redux';
 import { json2excel } from 'js2excel';
+import moment from 'moment';
 import select from '../../../utils/select';
 import ToJS from '../../../hoc/ToJS';
 import { insertStudent } from '../actions';
+
+const { getJsDateFromExcel } = require('excel-date-to-js');
 
 const { TabPane } = Tabs;
 // import { connect } from 'react-redux';
@@ -118,7 +121,7 @@ class ImportModal extends React.Component {
               item.name = (item.name.toString().trim() === '') ? undefined : item.name.toString().trim();
             }
             if (item.date_birth !== undefined) {
-              item.date_birth = (item.date_birth.toString().trim() === '') ? undefined : item.date_birth.toString().trim();
+              item.date_birth = (item.date_birth.toString().trim() === '') ? undefined : moment(getJsDateFromExcel(item.date_birth.toString().trim())).format('DD-MM-YYYY');
             }
             if (item.gender !== undefined) {
               item.gender = (item.gender.toString().trim() === '') ? undefined : item.gender.toString().trim();

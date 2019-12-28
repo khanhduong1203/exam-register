@@ -148,10 +148,9 @@ class StudentList extends React.Component {
       },
       {
         title: <b>Xoá</b>,
-        dataIndex: 'student_code',
-        key: 'student_code',
-        render: value => (
-          <Popconfirm title="Bạn chắc chắn muốn xóa sinh viên này?" onConfirm={() => this.props.onDelete(value)}>
+        key: 'delete',
+        render: (value, record) => (
+          <Popconfirm title="Bạn chắc chắn muốn xóa sinh viên này?" onConfirm={() => this.props.onDelete(record.student_code)}>
             <a style={{ color: 'red' }}>Xóa</a>
           </Popconfirm>
         ),

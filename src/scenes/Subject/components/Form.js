@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Radio, Form, Input, Select, Button, Row, Col, Modal, InputNumber,
+  Radio, Form, Input, Select, Button, Row, Col, Modal, InputNumber, Divider,
 } from 'antd';
 
 import ToJS from '../../../hoc/ToJS/index';
@@ -16,7 +16,7 @@ class RoomForm extends Component {
       okButtonProps: { type: 'danger' },
       cancelText: 'Huỷ',
       cancelButtonProps: { type: 'primary' },
-      title: `Bạn chắc chắn xoá ${subject.subject_name}`,
+      title: `Bạn chắc chắn xoá học phần ${subject.subject_name} ?`,
       content: 'Phòng và mọi thông tin liên quan sẽ bị xoá khỏi hệ thống !',
       onOk: () => this.props.onDelete(subject.subject_id),
     });
@@ -32,7 +32,7 @@ class RoomForm extends Component {
             values,
           );
         } else {
-          this.props.onSubmit({ ...values, exam_id: '' });
+          this.props.onSubmit(values);
         }
       }
     });
@@ -48,7 +48,7 @@ class RoomForm extends Component {
     return (
       <Form onSubmit={this.handleSubmit}>
         <Row gutter={24}>
-          <Col span={12}>
+          <Col span={24}>
             <Item label="Tên môn học">
               {getFieldDecorator('subject_name', {
                 initialValue: editMode ? subject.subject_name : '',
@@ -61,13 +61,15 @@ class RoomForm extends Component {
               })(<Input type="text" placeholder="Tên môn học" />)}
             </Item>
           </Col>
-          <Col span={12}>
+        </Row>
+        <Row gutter={24}>
+          <Col span={24}>
             <Item label="Mã môn học">
               {getFieldDecorator('subject_code', {
                 initialValue: editMode ? subject.subject_code : '',
                 rules: [
                   {
-                    required: false,
+                    required: true,
                     message: 'Nhập mã phòng',
                   },
                 ],
@@ -75,21 +77,26 @@ class RoomForm extends Component {
             </Item>
           </Col>
         </Row>
-        <Item>
-          {editMode ? (
-            <Button
-              ghost
-              style={{ border: 'none' }}
-              type="danger"
-              onClick={() => this.onDelete(subject)}
-            >
+        <Divider />
+        <Row gutter={24}>
+          <Col span={24}>
+            <Item>
+              {editMode ? (
+                <Button
+                  ghost
+                  style={{ border: 'none', float: 'right' }}
+                  type="danger"
+                  onClick={() => this.onDelete(subject)}
+                >
               Xoá
-            </Button>
-          ) : null}
-          <Button style={{ float: 'right' }} icon="plus" type="primary" htmlType="submit">
-            {editMode ? 'Hoàn thành' : 'Thêm môn học'}
-          </Button>
-        </Item>
+                </Button>
+              ) : null}
+              <Button style={{ float: 'left' }} icon="plus" type="primary" htmlType="submit">
+                {editMode ? 'Hoàn thành' : 'Thêm môn học'}
+              </Button>
+            </Item>
+          </Col>
+        </Row>
       </Form>
     );
   }

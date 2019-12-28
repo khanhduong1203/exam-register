@@ -12,7 +12,7 @@ import FormShift from './formShift';
 import FormRoom from './formRoom';
 import select from '../../../utils/select';
 import {
-  updateExamRoom, updateExamShift, deleteExamRoom, deleteExamShift,
+  updateExamRoom, updateExamShift, deleteExamRoom, deleteExamShift, createStudentSubject,
 } from '../action';
 
 const { Item } = Form;
@@ -64,6 +64,10 @@ const columnsSchedule = () => [
     dataIndex: 'subject_code',
   },
   {
+    title: <b>Ngày thi</b>,
+    dataIndex: 'date',
+  },
+  {
     title: <b>Ca thi</b>,
     dataIndex: 'exam_shift',
   },
@@ -73,11 +77,11 @@ const columnsSchedule = () => [
   },
   {
     title: <b>Số máy tối đa</b>,
-    dataIndex: 'exam_room',
+    dataIndex: 'xx',
   },
   {
     title: <b>Số máy trống</b>,
-    dataIndex: 'exam_room',
+    dataIndex: 'yy',
   },
 ];
 class FormExam extends React.Component {
@@ -174,6 +178,21 @@ class FormExam extends React.Component {
     );
   }
 
+  createStudentSubject = (payload) => {
+    this.props.createStudentSubject(
+      payload,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Thêm danh sách thành công' });
+          this.setState({ visible: false });
+        },
+        onError: () => {
+          notification.error({ message: 'Thêm danh sách thất bại' });
+        },
+      },
+    );
+  }
+
   render() {
     const {
       form: { getFieldDecorator },
@@ -181,6 +200,7 @@ class FormExam extends React.Component {
       exam,
       selectRoom,
       listSubject,
+      students,
     } = this.props;
     const { subject } = this.state;
     return (
@@ -210,10 +230,6 @@ class FormExam extends React.Component {
                       />
                     </TabPane>
                     <TabPane key="exam-subject" tab="Danh sách môn thi">
-                      {/* <EditTable
-                        data={listSubject}
-                        name="subject"
-                      /> */}
                       <Table
                         columns={columnsSubject('', '', this.onOpenModal)}
                         dataSource={listSubject}
@@ -240,8 +256,10 @@ class FormExam extends React.Component {
         </Form>
         <ImportModal
           visible={this.state.visible}
+          students={students}
           subject={subject}
           closeModal={() => this.setState({ visible: false, subject: {} })}
+          onSubmit={this.createStudentSubject}
         />
       </React.Fragment>
     );
@@ -250,6 +268,7 @@ class FormExam extends React.Component {
 
 const mapStateToProps = state => ({
   exam: select(state, 'examReducer', 'detail'),
+  students: select(state, 'studentReducer', 'list'),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -257,6 +276,7 @@ const mapDispatchToProps = dispatch => ({
   saveExamRoom: (id, payload, meta) => dispatch(updateExamRoom(id, payload, meta)),
   deleteExamShift: (id, meta) => dispatch(deleteExamShift(id, meta)),
   deleteExamRoom: (id, payload, meta) => dispatch(deleteExamRoom(id, payload, meta)),
+  createStudentSubject: (payload, meta) => dispatch(createStudentSubject(payload, meta)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Form.create()(ToJS(FormExam)));

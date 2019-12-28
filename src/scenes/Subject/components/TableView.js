@@ -7,15 +7,34 @@ import {
   Button,
   Divider,
   Popconfirm,
+  Drawer,
+  Row,
+  Col,
+  notification,
 } from 'antd';
 import { Link } from 'react-router-dom';
 import ROUTER from '../../../constant/router';
+import FormSubject from './Form';
 
 export default class TableView extends React.Component {
   state = {
     filteredInfo: null,
     sortedInfo: null,
     searchText: '',
+    visible: false,
+  };
+
+  showDrawer = (subject_id) => {
+    this.setState({
+      visible: true,
+    });
+    this.props.getSubject(subject_id);
+  };
+
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -98,6 +117,31 @@ export default class TableView extends React.Component {
     // console.log(item);
   }
 
+  handleSubmit = (id, payload) => {
+    this.props.updateSubject(id, payload, {
+      onSuccess: () => {
+        notification.success({ message: 'Cập nhập thành công' });
+        this.props.history.push(ROUTER.SUBJECT.INDEX);
+      },
+      onError: error => notification.error({ message: `${error}, "Cập nhật gặp lỗi !"` }),
+    });
+  }
+
+  deleteSubject = (id) => {
+    this.props.deleteSubject(
+      id,
+      {
+        onSuccess: () => {
+          notification.success({ message: 'Xóa học phần thành công' });
+          this.props.history.replace(ROUTER.SUBJECT.INDEX);
+        },
+        onError: () => {
+          notification.error({ message: 'Xóa học phần thất bại' });
+        },
+      },
+    );
+  }
+
   render() {
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -109,7 +153,7 @@ export default class TableView extends React.Component {
         key: 'subject_code',
         sorter: (a, b) => a.subject_code - b.subject_code,
         sortOrder: sortedInfo.columnKey === 'subject_code' && sortedInfo.order,
-        render: (value, record) => <Link to={ROUTER.SUBJECT.EDIT.replace(':id', record.subject_code)}>{value}</Link>,
+        // render: (value, record) => <Link to={ROUTER.SUBJECT.EDIT.replace(':id', record.subject_code)}>{value}</Link>,
       },
       {
         title: <b>Tên học phần</b>,
@@ -118,6 +162,13 @@ export default class TableView extends React.Component {
         sorter: (a, b) => a.subject_name.localeCompare(b.subject_name),
         sortOrder: sortedInfo.columnKey === 'subject_name' && sortedInfo.order,
         ...this.getColumnSearchProps('subject_name'),
+      },
+      {
+        title: <b>Sửa</b>,
+        key: 'fix',
+        render: (value, record) => (
+          <a onClick={() => this.showDrawer(record.subject_id)}>Sửa</a>
+        ),
       },
       {
         title: <b>Xóa</b>,
@@ -131,11 +182,11 @@ export default class TableView extends React.Component {
       },
     ];
     const {
-      data, isFetching, history, getSubjects,
+      data, isFetching, history, getSubjects, showDrawer, detail,
     } = this.props;
     return (
       <div>
-        <Button type="primary" onClick={() => history.push(ROUTER.SUBJECT.ADD)}>+ Thêm mới </Button>
+        <Button type="primary" onClick={showDrawer}>+ Thêm mới </Button>
         <Button onClick={this.clearAll} style={{ float: 'right' }}>Bỏ lọc</Button>
         <Button onClick={getSubjects} style={{ float: 'right', marginRight: '10px' }}>Tải lại</Button>
         <Divider />
@@ -146,6 +197,24 @@ export default class TableView extends React.Component {
           loading={isFetching}
           rowKey={record => record.subject_id}
         />
+        <Row gutter={24}>
+          <Col span={14} offset={5}>
+            <Drawer
+              title="Cập nhật học phần"
+              width={500}
+              onClose={this.onClose}
+              visible={this.state.visible}
+              bodyStyle={{ paddingBottom: 80 }}
+            >
+              <FormSubject
+                editMode
+                subject={detail}
+                onSubmit={this.handleSubmit}
+                onDelete={this.deleteSubject}
+              />
+            </Drawer>
+          </Col>
+        </Row>
       </div>
     );
   }

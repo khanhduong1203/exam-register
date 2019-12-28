@@ -11,6 +11,7 @@
     "chai": "^4.2.0",
     "chosen-js": "^1.8.7",
     "customize-cra": "^0.8.0",
+    "excel-date-to-js": "^1.0.2",
     "exceljs": "^3.4.0",
     "express": "^4.17.1",
     "file-saver": "^2.0.2",
