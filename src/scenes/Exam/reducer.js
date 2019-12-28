@@ -46,7 +46,7 @@ const EXAM = (state = EXAMState, action) => {
         ...e,
         date: moment().format('DD-MM-YYYY'),
         exam_shift_id: '',
-        exam_room_id: '',
+        exam_room_id: [],
       }));
       return state.merge({
         detail: action.payload,
